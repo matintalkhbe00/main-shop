@@ -5,7 +5,6 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django import forms
 
 
-
 class UserManager(BaseUserManager):
     def create_user(self, phone, password=None):
         """
@@ -35,7 +34,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class User(AbstractBaseUser):
     email = models.EmailField(
         verbose_name="ایمیل",
@@ -49,7 +47,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False, verbose_name="ادمین")
 
-    objects = UserManager()
+    # objects = UserManager()
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
@@ -77,37 +75,6 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
-class Profile(models.Model):
-    phone = models.CharField(max_length=12)
-    password = models.CharField(max_length=50)
-    email = models.EmailField()
-
-class LoginForm(forms.Form):
-    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-
-class LoginFormEmail(forms.Form):
-    email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-
-class RegisterForm(forms.Form):
-    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[validators.MaxLengthValidator(11)])
-
-class CheckOtpForm(forms.Form):
-    code = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[validators.MaxLengthValidator(4)])
-
-
-class Otp(models.Model):
-    token = models.CharField(max_length=1000 , unique=True)
-    phone = models.CharField(max_length=11, unique=True)
-    code = models.SmallIntegerField()
-    expiration_data = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.phone
-
-
-
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='address')
     first_name = models.CharField(max_length=50)
@@ -120,9 +87,11 @@ class Address(models.Model):
     def __str__(self):
         return self.phone
 
+class Otp(models.Model):
+    token = models.CharField(max_length=1000 , unique=True)
+    phone = models.CharField(max_length=11, unique=True)
+    code = models.SmallIntegerField()
+    expiration_data = models.DateField(auto_now_add=True)
 
-class AddressCreationsForm(forms.ModelForm):
-    user = forms.IntegerField(required=False)
-    class Meta:
-        model = Address
-        fields = "__all__"
+    def __str__(self):
+        return self.phone

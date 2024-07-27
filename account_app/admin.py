@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 
 from account_app.models import User, Otp , Address
 
+
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -74,7 +75,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["phone", "email", "fullname", "password1"],
+                "fields": ["phone", "fullname", "email", "fullname", "password1", "password2"],
             },
         ),
     ]
