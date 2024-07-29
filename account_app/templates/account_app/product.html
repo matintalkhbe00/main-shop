@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block main %}
-    <main class="bg-zinc-800 text-white font-DanaRegular">
+    <main class="bg-zinc-800 text-white font-DanaRegular py-[150px]">
         <div class="container mx-auto p-4">
             <!-- کانتینر اصلی -->
             <div class="flex flex-col lg:flex-row-reverse gap-6">
@@ -10,7 +10,7 @@
                 <div class="w-full lg:w-1/3 bg-zinc-600 rounded-lg overflow-hidden relative">
                     <div class="slider-container">
                         <div id="slider" class="slider-images">
-                            <img src="./img/products/p1.png" alt="محصول 1" class="slider-image">
+                            <img src="{% static 'img/products/p1.png' %}" alt="محصول 1" class="slider-image">
                             <img src="./img/products/p2.png" alt="محصول 2" class="slider-image">
                             <img src="./img/products/p3.png" alt="محصول 3" class="slider-image">
                             <!-- تصاویر بیشتر -->
@@ -130,7 +130,7 @@
     </main>
 {% endblock %}
 
-{% block footerReference %}
+{% block script %}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('button[id^="tab-"]');

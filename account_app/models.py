@@ -1,40 +1,32 @@
-from django.core import validators
-from django.core.validators import RegexValidator
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django import forms
-
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.validators import RegexValidator
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
-    def create_user(self, phone, password=None):
+    def create_user(self, phone, password=None, **extra_fields):
         """
-        Creates and saves a User with the given email and password.
+        Creates and saves a User with the given phone and password.
         """
         if not phone:
-            raise ValueError("Users must have an phone address")
+            raise ValueError("The Phone field must be set")
 
-        user = self.model(
-            phone = phone
-        )
-
+        user = self.model(phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, password=None):
+    def create_superuser(self, phone, password=None, **extra_fields):
         """
-        Creates and saves a superuser with the given email, d and password.
+        Creates and saves a superuser with the given phone and password.
         """
-        user = self.create_user(
-            phone,
-            password=password,
+        extra_fields.setdefault('is_admin', True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
+        return self.create_user(phone, password, **extra_fields)
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name="ایمیل",
         max_length=255,
@@ -42,14 +34,27 @@ class User(AbstractBaseUser):
         null=True,
         blank=True
     )
-    fullname = models.CharField(max_length=50,null=True,blank=True, verbose_name="نام کامل")
-    phone = models.CharField(max_length=12, unique=True, verbose_name="شماره تلفن")
+    fullname = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        verbose_name="نام کامل"
+    )
+    phone = models.CharField(
+        max_length=12,
+        unique=True,
+        verbose_name="شماره تلفن",
+        validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$', message="شماره تلفن معتبر نیست")]
+    )
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True, verbose_name="عکس پروفایل")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False, verbose_name="ادمین")
+    is_staff = models.BooleanField(default=False, verbose_name="عضو کادر")
+    is_superuser = models.BooleanField(default=False, verbose_name="سوپر کاربر")
 
-    # objects = UserManager()
+    objects = UserManager()
 
-    USERNAME_FIELD = "phone"
+    USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -57,30 +62,22 @@ class User(AbstractBaseUser):
         verbose_name_plural = "کاربرها"
 
     def __str__(self):
-        return self.phone  # برگرداندن شماره تلفن به جای ایمیل
+        return self.phone
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
+        return self.is_admin
 
     def has_module_perms(self, app_label):
         "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
         return self.is_admin
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='address')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    email = models.EmailField(blank=True , null=True )
-    phone = models.CharField(max_length=12)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=12, validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$', message="شماره تلفن معتبر نیست")])
     address = models.CharField(max_length=300)
     postal_code = models.CharField(max_length=50, unique=True)
 
@@ -88,10 +85,12 @@ class Address(models.Model):
         return self.phone
 
 class Otp(models.Model):
-    token = models.CharField(max_length=1000 , unique=True)
-    phone = models.CharField(max_length=11, unique=True)
+    token = models.CharField(max_length=1000, unique=True)
+    phone = models.CharField(max_length=12, unique=True, validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$', message="شماره تلفن معتبر نیست")])
     code = models.SmallIntegerField()
-    expiration_data = models.DateField(auto_now_add=True)
+    expiration_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.phone
+
+

@@ -1,40 +1,38 @@
 {% load static %}
 
 
-    <div class="overlay invisible opacity-0">
+<div class="overlay invisible opacity-0">
 
-    </div>
-    <!-- <div class="overlay"></div> -->
-    <script src="{% static 'script/script.js' %}"></script>
-    <script src="{% static 'script/swiper-bundle.min.js' %}"></script>
-    <script>
-        const swiper = new Swiper('.swiper', {
+</div>
+<!-- <div class="overlay"></div> -->
+<script src="{% static 'script/script.js' %}"></script>
+<script src="{% static 'script/swiper-bundle.min.js' %}"></script>
+<script>
+    const swiper = new Swiper('.swiper', {
 
-            slidesPerView: 2,
-            spaceBetween: 14,
-            // Navigation arrows
-            navigation: {
-                nextEl: '.swiper-button-prev-custom',
-                prevEl: '.swiper-button-next-custom',
+        slidesPerView: 2,
+        spaceBetween: 14,
+        // Navigation arrows
+        navigation: {
+            nextEl: '.swiper-button-prev-custom',
+            prevEl: '.swiper-button-next-custom',
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 3,
+                spaceBetween: 14
+            }, 768: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            }, 1024: {
+                slidesPerView: 4,
+                spaceBetween: 20
             },
-            breakpoints: {
-                640: {
-                    slidesPerView: 3,
-                    spaceBetween: 14
-                }, 768: {
-                    slidesPerView: 3,
-                    spaceBetween: 20
-                }, 1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 20
-                },
-            },
-            // And if we need scrollbar
-            scrollbar: {
-                el: '.swiper-scrollbar',
-            },
-        });
-    </script>
-{% block footerReference %}
-    
-{% endblock %}
+        },
+        // And if we need scrollbar
+        scrollbar: {
+            el: '.swiper-scrollbar',
+        },
+    });
+</script>
+

@@ -1,6 +1,14 @@
 {% load static %}
 {#{% load render_partial %}#}
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
 {% include 'includes/headRefrence.html' %}
+    {% block style %}
+    	
+    {% endblock %}
+</head>
 {% include 'includes/svg.html' %}
 
 <body class="font-DanaRegular bg-gray-100 dark:bg-zinc-800">
@@ -17,5 +25,8 @@
 
 {% include 'includes/footer.html' %}
 {% include 'includes/footerRefrence.html' %}
+{% block script %}
+	
+{% endblock %}
 </body>
 </html>

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <style>
+        body {
+            background-color: #1f2937; /* رنگ پس‌زمینه برای zink-800 */
+            color: #e5e7eb; /* متن روشن برای تضاد */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .sidebar {
+            background-color: #4b5563; /* رنگ پس‌زمینه برای تب‌ها */
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar button {
+            background: none;
+            border: none;
+            color: #e5e7eb;
+            padding: 1rem;
+            text-align: left;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar button.active {
+            background-color: #1f2937; /* رنگ فعال برای تب‌ها */
+        }
+        .profile-details {
+            background-color: #2d3748; /* رنگ پس‌زمینه برای جزئیات */
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e5e7eb;
+        }
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid #4b5563;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+        .profile-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .address, .product {
+            margin-bottom: 1rem;
+        }
+        .address p, .product p {
+            margin: 0.5rem 0;
+        }
+        .product {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            background-color: #4b5563;
+            border-radius: 8px;
+        }
+        .product img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .product-info {
+            text-align: center;
+        }
+        .product-info p {
+            margin: 0.5rem 0;
+        }
+
+        /* ریسپانسیو برای صفحه‌نمایش‌های کوچک */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-bottom: 0;
+            }
+            .profile-details {
+                padding: 0.5rem;
+            }
+            .profile-header img {
+                width: 80px;
+                height: 80px;
+            }
+            .profile-header h1 {
+                font-size: 1.2rem;
+            }
+            .sidebar button {
+                padding: 0.8rem;
+            }
+        }
+
+        /* ریسپانسیو برای موبایل‌های خیلی کوچک */
+        @media (max-width: 480px) {
+            .profile-header h1 {
+                font-size: 1rem;
+            }
+            .profile-header img {
+                width: 60px;
+                height: 60px;
+            }
+            .product img {
+                width: 60px;
+                height: 60px;
+            }
+            .sidebar button {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+<main class="lg:py-[150px]">
+    <div class="container">
+        <!-- نوار کناری تب‌ها -->
+        <div class="sidebar">
+            <button class="tab-button active" data-target="info">اطلاعات کلی</button>
+            <button class="tab-button" data-target="addresses">آدرس‌ها</button>
+            <button class="tab-button" data-target="products">محصولات خریداری شده</button>
+        </div>
+
+        <!-- جزئیات پروفایل -->
+        <div class="profile-details">
+            <!-- هدر پروفایل -->
+            <div class="profile-header">
+                <img src="{{ user.profile_picture.url }}" alt="عکس پروفایل کاربر">
+                <div>
+                    <h1>{{ user.fullname }}</h1>
+                    <p>شماره تلفن: {{ user.phone }}</p>
+                    <p>ایمیل: {{ user.email }}</p>
+                    <p>وضعیت:
+                        {% if user.is_active %}
+                            فعال
+                        {% else %}
+                            غیرفعال
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- محتوای تب‌ها -->
+            <div class="tab-content info active">
+                <h2>اطلاعات کلی</h2>
+                <p>نام کامل: {{ user.fullname }}</p>
+                <p>شماره تلفن: {{ user.phone }}</p>
+                <p>ایمیل: {{ user.email }}</p>
+                <p>وضعیت:
+                    {% if user.is_active %}
+                        فعال
+                    {% else %}
+                        غیرفعال
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="tab-content addresses">
+                <h2>آدرس‌ها</h2>
+                {% if user.addresses.exists %}
+                {% for address in user.addresses.all %}
+                <div class="address">
+                    <p>نام: {{ address.first_name }}</p>
+                    <p>نام خانوادگی: {{ address.last_name }}</p>
+                    <p>ایمیل: {{ address.email }}</p>
+                    <p>شماره تلفن: {{ address.phone }}</p>
+                    <p>آدرس: {{ address.address }}</p>
+                    <p>کد پستی: {{ address.postal_code }}</p>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p>آدرس‌ها پیدا نشدند.</p>
+                {% endif %}
+            </div>
+
+            <div class="tab-content products">
+                <h2>محصولات خریداری شده</h2>
+                <!-- لیست محصولات را به همین روش اضافه کنید -->
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.getAttribute('data-target');
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.classList.contains(target)) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
