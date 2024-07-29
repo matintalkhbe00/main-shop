@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <main class="bg-zinc-800 text-white font-DanaRegular">
+        <div class="container mx-auto p-4">
+            <!-- کانتینر اصلی -->
+            <div class="flex flex-col lg:flex-row-reverse gap-6">
+                <!-- اسلایدر عکس محصول -->
+                <div class="w-full lg:w-1/3 bg-zinc-600 rounded-lg overflow-hidden relative">
+                    <div class="slider-container">
+                        <div id="slider" class="slider-images">
+                            <img src="./img/products/p1.png" alt="محصول 1" class="slider-image">
+                            <img src="./img/products/p2.png" alt="محصول 2" class="slider-image">
+                            <img src="./img/products/p3.png" alt="محصول 3" class="slider-image">
+                            <!-- تصاویر بیشتر -->
+                        </div>
+                        <div class="slider-button slider-prev" id="prev">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+                            </svg>
+                        </div>
+                        <div class="slider-button slider-next" id="next">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- توضیحات محصول -->
+                <div class="flex-1 bg-zinc-700 p-6 rounded-lg shadow-lg">
+                    <h4 class="text-2xl font-semibold mb-4">
+                        قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
+                    </h4>
+                    <div class="mb-4">
+                        <span class="text-teal-400 text-lg">14.500 تومان تخفیف</span>
+                    </div>
+                    <div class="text-3xl font-bold mb-4">
+                        <span>175,000</span>
+                        <span class="text-lg"> تومان</span>
+                    </div>
+                    <p class="text-zinc-300">
+                        این قهوه با کیفیت بالا و طعم غنی، مناسب برای استفاده در دستگاه‌های اسپرسو است. از ویژگی‌های آن
+                        می‌توان به عطر و طعم فوق‌العاده و پودر ریز آن اشاره کرد.
+                    </p>
+                </div>
+
+            </div>
+            <!-- تب‌های جزئیات محصول -->
+            <div class="mt-8 bg-zinc-700 rounded-lg shadow-lg">
+                <!-- تب‌های ناوبری -->
+                <div class="flex border-b border-zinc-600">
+                    <button id="tab-description" class="w-1/3 py-3 text-center tab-button active">توضیحات محصول</button>
+                    <button id="tab-specs" class="w-1/3 py-3 text-center tab-button">مشخصات محصول</button>
+                    <button id="tab-reviews" class="w-1/3 py-3 text-center tab-button">نظرات</button>
+                </div>
+                <!-- محتویات تب‌ها -->
+                <div id="content-description" class="tab-content p-4 active">
+                    <div class="bg-zinc-800 p-4 rounded-lg">
+                        <h5 class="text-xl font-semibold mb-2">توضیحات محصول</h5>
+                        <p>جزئیات کامل و توضیحات اضافی در این بخش قرار می‌گیرد. این شامل ویژگی‌ها و اطلاعات مربوط به
+                            محصول
+                            است.</p>
+                    </div>
+                </div>
+                <div id="content-specs" class="tab-content p-4">
+                    <div class="bg-zinc-800 p-4 rounded-lg">
+                        <h5 class="text-xl font-semibold mb-2">مشخصات محصول</h5>
+                        <ul>
+                            <li>وزن: 250 گرم</li>
+                            <li>نوع: اسپرسو</li>
+                            <li>برند: بن مانو</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="content-reviews" class="tab-content p-4">
+                    <div class="bg-zinc-800 p-4 rounded-lg">
+                        <div class="sub-tabs flex border-b border-zinc-600">
+                            <button id="sub-tab-reviews-all" class="w-1/3 py-2 text-center sub-tab-button">همه
+                                نظرات
+                            </button>
+                            <button id="sub-tab-reviews-my" class="w-1/3 py-2 text-center sub-tab-button">نظرات من
+                            </button>
+                            <button id="sub-tab-reviews-add" class="w-1/3 py-2 text-center sub-tab-button">افزودن
+                                نظر
+                            </button>
+                        </div>
+                        <div id="sub-content-reviews-all" class="sub-tab-content p-4 active">
+                            <div class="bg-zinc-800 p-4 rounded-lg shadow-inner mb-4">
+                                <div class="flex items-start mb-4">
+                                    <img src="https://via.placeholder.com/40" alt="User Avatar"
+                                         class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <h6 class="font-semibold">کاربر 1</h6>
+                                        <p class="text-sm">این قهوه واقعا عالی است! طعم فوق‌العاده و کیفیت بالا.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start mb-4">
+                                    <img src="https://via.placeholder.com/40" alt="User Avatar"
+                                         class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <h6 class="font-semibold">کاربر 2</h6>
+                                        <p class="text-sm">من از این قهوه استفاده کرده‌ام و از خرید خود راضی هستم. حتماً
+                                            پیشنهاد می‌کنم.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="sub-content-reviews-my" class="sub-tab-content p-4">
+                            <p>این بخش شامل نظرات شما می‌باشد که در اینجا نمایش داده می‌شود.</p>
+                        </div>
+                        <div id="sub-content-reviews-add" class="sub-tab-content p-4">
+                            <div class="bg-zinc-800 p-4 rounded-lg shadow-inner">
+                                <h6 class="text-lg font-semibold mb-2">افزودن نظر</h6>
+                                <textarea class="w-full p-2 rounded-lg bg-zinc-700 text-white mb-2" rows="3"
+                                          placeholder="نظر خود را بنویسید..."></textarea>
+                                <button class="bg-teal-500 hover:bg-teal-400 text-white py-2 px-4 rounded-lg">ارسال
+                                    نظر
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block footerReference %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('button[id^="tab-"]');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const subTabs = document.querySelectorAll('button[id^="sub-tab-"]');
+            const subTabContents = document.querySelectorAll('.sub-tab-content');
+
+            const slider = document.getElementById('slider');
+            const slides = slider.querySelectorAll('.slider-image');
+            const prevButton = document.getElementById('prev');
+            const nextButton = document.getElementById('next');
+            let currentIndex = 0;
+
+            // مدیریت تب‌های اصلی
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const targetId = this.id.replace('tab-', 'content-');
+                    document.getElementById(targetId).classList.add('active');
+
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // فعال کردن یا غیر فعال کردن زیرتب‌ها در تب نظرات
+                    if (this.id === 'tab-reviews') {
+                        subTabs.forEach(subTab => subTab.classList.add('active'));
+                    } else {
+                        subTabs.forEach(subTab => subTab.classList.remove('active'));
+                    }
+                });
+            });
+
+            // مدیریت زیرتب‌ها در تب نظرات
+            subTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    subTabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    const targetId = this.id.replace('sub-tab-', 'sub-content-');
+                    document.getElementById(targetId).classList.add('active');
+
+                    subTabs.forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+
+            // تنظیم پیش‌فرض
+            document.getElementById('tab-description').click();
+
+            // مدیریت اسلایدر تصاویر
+            function updateSlider() {
+                const offset = -currentIndex * 100;
+                slider.style.transform = `translateX(${offset}%)`;
+
+                // نمایش یا مخفی کردن دکمه‌های اسلایدر
+                prevButton.classList.toggle('show', currentIndex > 0);
+                nextButton.classList.toggle('show', currentIndex < slides.length - 1);
+            }
+
+            prevButton.addEventListener('click', function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateSlider();
+                }
+            });
+
+            nextButton.addEventListener('click', function () {
+                if (currentIndex < slides.length - 1) {
+                    currentIndex++;
+                    updateSlider();
+                }
+            });
+
+            // تنظیم پیش‌فرض
+            updateSlider();
+        });
+    </script>
+{% endblock %}
