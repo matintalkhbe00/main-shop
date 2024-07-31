@@ -1,18 +1,26 @@
 {% load static %}
 
-    <meta charset="UTF-8" />
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Coffee Shop</title>
-    <link rel="icon" href="{% static 'img/app-logo.png' %}" type="image/png" />
-    <link rel="stylesheet" href="{% static 'style/output.css' %}">
+<meta charset="UTF-8"/>
+<meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+<title>Coffee Shop</title>
+<link rel="icon" href="{% static 'img/app-logo.png' %}" type="image/png"/>
+<link rel="stylesheet" href="{% static 'style/output.css' %}">
 
-    <link rel="stylesheet" href="{% static 'style/swiper-bundle.min.css' %}">
-    <script type="text/javascript">
-        if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
-    </script>
+<link rel="stylesheet" href="{% static 'style/swiper-bundle.min.css' %}">
+{#<!-- Swiper CSS -->#}
+{#<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>#}
+{#<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>#}
+{#<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.5.2/ionicons.min.css">#}
+
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script type="text/javascript">
+    if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+</script>

@@ -43,15 +43,18 @@
                                  alt="{{ product.images.first.alt_text }}">
                         {% endif %}
                         {% if product.discount_percentage %}
+                            {% if product.status == "in_stock" %}
+
                             <span class="absolute block top-1 right-1 bg-orange-300 h-5 md:h-[30px] rounded-full px-2.5 md:px-3 py-1 font-DanaDemiBold text-xs md:text-base text-white dark:text-zinc-700">
                                 {{ product.discount_percentage }}%
                             </span>
+                            {% endif %}
                         {% endif %}
                     </div>
                     <!-- Product title -->
-                    <div class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
+                    <a href="{% url 'product_detail' product.id %}" class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
                         {{ product.name }}
-                    </div>
+                    </a>
                     <!-- Price -->
                     <div class="flex gap-x-2 md:gap-2.5 pb-2.5 md:pb-4 items-center">
                         {% if product.status == 'in_stock' %}
