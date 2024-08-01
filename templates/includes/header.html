@@ -1,354 +1,377 @@
-{% load static %}    
+{% load static %}
 <!-- Start Header  -->
-    <!-- Header Of Windows lg & xl  -->
-    <header
+<!-- Header Of Windows lg & xl  -->
+<header
         class="fixed top-9 right-0 left-0 items-center hidden md:flex md:px-6 lg:px-10 py-5 w-[94%] xl:w-[90%] h-24 bg-black/50 mx-auto rounded-3xl backdrop-blur-[6px] z-50">
-        <div class="flex justify-between items-center w-full">
-            <!-- Logo & Menu -->
-            <nav class="flex items-center gap-x-5 h-14">
-                <div class="shrink-0">
-                    <img src="{% static 'img/app-logo.png' %}" alt="Coffee-Shopp-Logo" />
-                </div>
-                <ul
+    <div class="flex justify-between items-center w-full">
+        <!-- Logo & Menu -->
+        <nav class="flex items-center gap-x-5 h-14">
+            <div class="shrink-0">
+                <img src="{% static 'img/app-logo.png' %}" alt="Coffee-Shopp-Logo"/>
+            </div>
+            <ul
                     class="flex gap-3 lg:gap-6 xl:gap-9 xl:mr-9 text-xl h-full text-gray-300 tracking-tightest child:leading-[56px]">
-                    <li>
-                        <a href="#" class="font-DanaMedium text-orange-200">صفحه ی اصلی</a>
-                    </li>
-                    <!-- has subset-->
-                    <li class="relative group">
-                        <a href="#" class="group-hover:text-orange-300 transition-all">فروشگاه</a>
-                        <!--subset-->
-                        <div
+                <li>
+                    <a href="#" class="font-DanaMedium text-orange-200">صفحه ی اصلی</a>
+                </li>
+                <!-- has subset-->
+                <li class="relative group">
+                    <a href="#" class="group-hover:text-orange-300 transition-all">فروشگاه</a>
+                    <!--subset-->
+                    <div
                             class="absolute top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible w-52 p-6 space-y-4 text-zinc-700 bg-white text-base border-t-[3px] border-orange-300 tracking-normal shadow-normal rounded-2xl transition-all child:inline-block child:transition-colors child-hover:text-orange-300 dark:text-white dark:bg-zinc-700">
-                            <a href="#">قهوه ی ویژه</a>
+                        <a href="#">قهوه ی ویژه</a>
 
-                            <a href="#">ویژه در سطح جهانی</a>
+                        <a href="#">ویژه در سطح جهانی</a>
 
-                            <a href="#">قهوه ی درجه ی یک</a>
+                        <a href="#">قهوه ی درجه ی یک</a>
 
-                            <a href="#">ترکیبات تجاری</a>
+                        <a href="#">ترکیبات تجاری</a>
 
-                            <a href="#">کپسول قهوه</a>
+                        <a href="#">کپسول قهوه</a>
 
-                            <a href="#">قهوه زینو برزیلی</a>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-orange-300">دیکشنری</a>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-orange-300">بلاگ</a>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-orange-300">درباره ی ما</a>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-orange-300">تماس با ما</a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- Cart & Theme Toggle & Login Link  -->
-            <div class="flex text-orange-200 gap-2.5 lg:gap-5 items-center">
-                <!-- Cart Icon & Theme Switch Btn -->
-                <div class="flex gap-2.5 lg:gap-5 items-center">
-                    <!-- Cart -->
-                    <div class="relative group">
-                        <!-- Cart Icon Hover  -->
-                        <div class="py-3 cursor-pointer">
-                            <svg class="w-8 h-8">
-                                <use xlink:href="#shopping-cart"></use>
-                            </svg>
-                        </div>
-                        <!-- Cart Box   -->
+                        <a href="#">قهوه زینو برزیلی</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="hover:text-orange-300">دیکشنری</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:text-orange-300">بلاگ</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:text-orange-300">درباره ی ما</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:text-orange-300">تماس با ما</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Cart & Theme Toggle & Login Link  -->
+        <div class="flex text-orange-200 gap-2.5 lg:gap-5 items-center">
+            <!-- Cart Icon & Theme Switch Btn -->
+            <div class="flex gap-2.5 lg:gap-5 items-center">
+                <!-- Cart -->
+                <div class="relative group">
+                    <!-- Cart Icon Hover  -->
+                    <div class="py-3 cursor-pointer">
+                        <svg class="w-8 h-8">
+                            <use xlink:href="#shopping-cart"></use>
+                        </svg>
+                    </div>
+                    <!-- Cart Box   -->
 
-                        <div
+                    <div
                             class="opacity-0 invisible absolute top-full group-hover:opacity-100 group-hover:visible w-[400px] p-5 left-0 space-y-4 text-zinc-700 bg-white text-base border-t-[3px] border-orange-300 tracking-normal shadow-normal rounded-2xl transition-all dark:text-white dark:bg-zinc-700 delay-75">
-                            <!-- Cart Header  -->
-                            <div class="flex justify-between items-center text-xs tracking-tighter">
-                                <span class="text-gray-300 text-sm">1 مورد</span>
-                                <div class="text-orange-300 flex items-center">
-                                    <a href="#">مشاهده ی سبد خرید</a>
-                                    <svg class="w-5 h-5">
-                                        <use xlink:href="#chevron-left-mini"></use>
-                                    </svg>
-                                </div>
+                        <!-- Cart Header  -->
+                        <div class="flex justify-between items-center text-xs tracking-tighter">
+                            <span class="text-gray-300 text-sm">1 مورد</span>
+                            <div class="text-orange-300 flex items-center">
+                                <a href="#">مشاهده ی سبد خرید</a>
+                                <svg class="w-5 h-5">
+                                    <use xlink:href="#chevron-left-mini"></use>
+                                </svg>
                             </div>
-                            <!-- Cart Body  -->
-                            <div
+                        </div>
+                        <!-- Cart Body  -->
+                        <div
                                 class="border-b border-b-gray-300 dark:border-b-white/10 divide-y divide-gray-200 dark:divide-white/10 child:py-5 pb-1">
-                                <div class="flex gap-x-2.5">
-                                    <!-- Img product -->
-                                    <div class="w-30 h-30">
-                                        <img src="{% static 'img/products/p1.png' %}" alt="product 1" />
-                                    </div>
-                                    <div class="flex flex-col justify-between">
-                                        <a href="#">
-                                            <h4
+                            <div class="flex gap-x-2.5">
+                                <!-- Img product -->
+                                <div class="w-30 h-30">
+                                    <img src="{% static 'img/products/p1.png' %}" alt="product 1"/>
+                                </div>
+                                <div class="flex flex-col justify-between">
+                                    <a href="#">
+                                        <h4
                                                 class="font-DanaMedium text-zinc-700 dark:text-white text-base line-clamp-2">
-                                                قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
-                                            </h4>
-                                        </a>
-                                        <div>
+                                            قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
+                                        </h4>
+                                    </a>
+                                    <div>
                                             <span
-                                                class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
+                                                    class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
                                                 تومان تخفیف</span>
-                                            <div class="text-zinc-700 dark:text-white">
-                                                <span class="text-xl">175,000 </span>
-                                                <span class="text-sm">تومان</span>
-                                            </div>
+                                        <div class="text-zinc-700 dark:text-white">
+                                            <span class="text-xl">175,000 </span>
+                                            <span class="text-sm">تومان</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Cart Footer Btn & SumProudact -->
-                            <div class="flex justify-between items-center">
-                                <!-- Sum Proudact -->
-                                <div class="flex flex-col">
-                                    <div class="text-gray-300 tracking-tighter text-xs">مبلغ قابل پرداخت</div>
-                                    <div class="text-zinc-700 dark:text-white">
-                                        <span class="text-xl">350,000 </span>
-                                        <span class="text-sm">تومان</span>
-                                    </div>
+                        <!-- Cart Footer Btn & SumProudact -->
+                        <div class="flex justify-between items-center">
+                            <!-- Sum Proudact -->
+                            <div class="flex flex-col">
+                                <div class="text-gray-300 tracking-tighter text-xs">مبلغ قابل پرداخت</div>
+                                <div class="text-zinc-700 dark:text-white">
+                                    <span class="text-xl">350,000 </span>
+                                    <span class="text-sm">تومان</span>
                                 </div>
-                                <!-- Button -->
-                                <div
+                            </div>
+                            <!-- Button -->
+                            <div
                                     class="bg-teal-600 text-white dark:bg-emerald-500 inline px-7 py-[14px] rounded-xl text-xl tracking-tighter hover:bg-teal-700 dark:hover:bg-emerald-600 transition-all">
-                                    <a href="#">ثبت سفارش</a>
-                                </div>
+                                <a href="#">ثبت سفارش</a>
                             </div>
                         </div>
                     </div>
-                    <!--Theme Switch Btn-->
-                    <div class="cursor-pointer toggle-theme">
-                        <!-- Switch To Dark Mood -->
-                        <svg class="w-8 h-8 inline-block dark:hidden">
-                            <use xlink:href="#moon"></use>
-                        </svg>
-                        <!-- Switch To light Mood -->
-                        <svg class="w-8 h-8 hidden dark:inline-block">
-                            <use xlink:href="#sun"></use>
-                        </svg>
-                    </div>
                 </div>
-                <!-- Divide Border -->
-                <span class="block w-px h-14 bg-white/20"></span>
-                <!-- Login Link -->
-                <a href="{% url 'account_app:login' %}" class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14">
+                <!--Theme Switch Btn-->
+                <div class="cursor-pointer toggle-theme">
+                    <!-- Switch To Dark Mood -->
+                    <svg class="w-8 h-8 inline-block dark:hidden">
+                        <use xlink:href="#moon"></use>
+                    </svg>
+                    <!-- Switch To light Mood -->
+                    <svg class="w-8 h-8 hidden dark:inline-block">
+                        <use xlink:href="#sun"></use>
+                    </svg>
+                </div>
+            </div>
+            <!-- Divide Border -->
+            <span class="block w-px h-14 bg-white/20"></span>
+            <!-- Login Link -->
+
+            {% if user.is_authenticated %}
+                <!-- اگر کاربر وارد شده باشد، لینک یا پیامی دیگر نمایش داده می‌شود -->
+                <a href="{% url 'account_app:profile' %}"
+                   class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14">
+                    <svg class="w-8 h-8 rotate-180">
+                        <use xlink:href="#arrow-right-end-on-rectangle"></use>
+                    </svg>
+                    <span class="tracking-tightest hidden lg:inline-block">پروفایل</span>
+                </a>
+            {% else %}
+                <!-- اگر کاربر وارد نشده باشد، لینک ورود/ثبت‌نام نمایش داده می‌شود -->
+                <a href="{% url 'account_app:login' %}"
+                   class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14">
                     <svg class="w-8 h-8 rotate-180">
                         <use xlink:href="#arrow-left-end-on-rectangle"></use>
                     </svg>
-                    <span class="tracking-tightest hidden lg:inline-block">ورود | ثبت‌نام</span></a>
-            </div>
+                    <span class="tracking-tightest hidden lg:inline-block">ورود | ثبت‌نام</span>
+                </a>
+            {% endif %}
+
         </div>
-    </header>
-    <!-- Header Of Mobile sm & md  -->
-    <div class="flex justify-between items-center md:hidden bg-white dark:bg-zinc-700 h-16 px-4">
-        <!-- Menu Icon  -->
-        <div class="nav-icon">
-            <svg class="w-6 h-6 text-zinc-700 dark:text-white">
-                <use href="#bars-3"></use>
-            </svg>
-        </div>
-        <!-- Menu  -->
-        <div
+    </div>
+</header>
+<!-- Header Of Mobile sm & md  -->
+<div class="flex justify-between items-center md:hidden bg-white dark:bg-zinc-700 h-16 px-4">
+    <!-- Menu Icon  -->
+    <div class="nav-icon">
+        <svg class="w-6 h-6 text-zinc-700 dark:text-white">
+            <use href="#bars-3"></use>
+        </svg>
+    </div>
+    <!-- Menu  -->
+    <div
             class="nav fixed min-h-screen top-0 bottom-0 -right-64 w-64 pt-3 px-4 bg-white dark:bg-zinc-700 z-20 transition-all overflow-y-auto">
-            <!-- Header Of Menu  -->
-            <div class="flex justify-between items-center pb-5 border-b border-b-gray-100 dark:border-b-white/10">
-                <div class="flex gap-3.5">
-                    <svg class="h-10 w-[41px] text-orange-300">
-                        <use href="#logo"></use>
-                    </svg>
-                    <svg class="h-10 w-[100px] text-orange-300">
-                        <use href="#logo-type"></use>
-                    </svg>
-                </div>
-
-                <div class="nav-close-btn">
-                    <svg class="h-5 w-5 text-zinc-600 dark:text-white">
-                        <use href="#x-mark"></use>
-                    </svg>
-                </div>
+        <!-- Header Of Menu  -->
+        <div class="flex justify-between items-center pb-5 border-b border-b-gray-100 dark:border-b-white/10">
+            <div class="flex gap-3.5">
+                <svg class="h-10 w-[41px] text-orange-300">
+                    <use href="#logo"></use>
+                </svg>
+                <svg class="h-10 w-[100px] text-orange-300">
+                    <use href="#logo-type"></use>
+                </svg>
             </div>
-            <!-- Body Of Menu  -->
 
-            <div>
-                <ul class="child:pr-2.5 space-y-6 text-zinc-600 dark:text-white">
-                    <li class="mt-6 flex gap-2">
-                        <svg class="w-5 h-5">
-                            <use xlink:href="#home"></use>
-                        </svg>
-                        <a href="#">صفحه اصلی</a>
-                    </li>
-                    <!-- Sidebar Menu  -->
-                    <li>
-                        <div class="flex items-center justify-between mb-3">
-                            <a href="#" class="flex gap-2">
-                                <svg class="w-5 h-5">
-                                    <use xlink:href="#shopping-bag"></use>
-                                </svg>
-                                <span>فروشگاه</span>
-                            </a>
-                            <span class="submenu-open-btn">
+            <div class="nav-close-btn">
+                <svg class="h-5 w-5 text-zinc-600 dark:text-white">
+                    <use href="#x-mark"></use>
+                </svg>
+            </div>
+        </div>
+        <!-- Body Of Menu  -->
+
+        <div>
+            <ul class="child:pr-2.5 space-y-6 text-zinc-600 dark:text-white">
+                <li class="mt-6 flex gap-2">
+                    <svg class="w-5 h-5">
+                        <use xlink:href="#home"></use>
+                    </svg>
+                    <a href="{% url 'home' %}">صفحه اصلی</a>
+                </li>
+                <!-- Sidebar Menu  -->
+                <li>
+                    <div class="flex items-center justify-between mb-3">
+                        <a href="#" class="flex gap-2">
+                            <svg class="w-5 h-5">
+                                <use xlink:href="#shopping-bag"></use>
+                            </svg>
+                            <span>فروشگاه</span>
+                        </a>
+                        <span class="submenu-open-btn">
                                 <svg class="w-5 h-5 ml-2">
                                     <use xlink:href="#chevron-down-mini"></use>
                                 </svg>
                             </span>
-                        </div>
-                        <div class="submenu">
-                            <a href="#">قهوه ویژه</a>
-                            <a href="#">ویژه در سطح جهانی</a>
-                            <a href="#">قهوه درجه یک</a>
-                            <a href="#">ترکیبات تجاری</a>
-                            <a href="#">کپسول قهوه</a>
-                            <a href="#">قهوه زینو برزیلی</a>
-                        </div>
-                    </li>
-                    <li class="flex gap-2">
-                        <svg class="w-5 h-5">
-                            <use xlink:href="#chat-bubble"></use>
-                        </svg><a href="#">دیکشنری</a>
-                    </li>
-                    <li class="flex gap-2">
-                        <svg class="w-5 h-5">
-                            <use xlink:href="#briefcase"></use>
-                        </svg>
-                        <a href="#">درباره ما</a>
-                    </li>
-                    <li class="flex gap-2">
-                        <svg class="w-5 h-5">
-                            <use xlink:href="#document-text"></use>
-                        </svg><a href="#">بلاگ</a>
-                    </li>
-                    <li class="flex gap-2">
-                        <svg class="w-5 h-5">
-                            <use xlink:href="#phone-arrow"></use>
-                        </svg><a href="#">تماس با ما</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- Footer Of Menu  -->
-            <div
-                class="border-t flex flex-col gap-y-6 items-start border-t-gray-100 dark:border-t-white/10 text-orange-300 py-8 px-2.5 mt-8">
-                <div class="flex gap-x-2">
-                    <svg class="h-5 w-5">
-                        <use href="#arrow-left-end-on-rectangle"></use>
-                    </svg>
-                    <a href="#">ورود | ثبت‌نام</a>
-                </div>
-                <div class="toggle-theme">
-                    <!-- Ligth Mode  -->
-                    <div class="flex items-center gap-x-2 dark:hidden">
-                        <svg class="h-5 w-5">
-                            <use href="#moon"></use>
-                            <span>تم تیره</span>
-                        </svg>
                     </div>
-                    <!-- Dark Mode  -->
-                    <div class="hidden dark:flex items-center gap-x-2">
-                        <svg class="h-5 w-5">
-                            <use href="#sun"></use>
-                            <span>تم روشن</span>
-                        </svg>
+                    <div class="submenu">
+                        <a href="#">قهوه ویژه</a>
+                        <a href="#">ویژه در سطح جهانی</a>
+                        <a href="#">قهوه درجه یک</a>
+                        <a href="#">ترکیبات تجاری</a>
+                        <a href="#">کپسول قهوه</a>
+                        <a href="#">قهوه زینو برزیلی</a>
                     </div>
-                </div>
-                <div class="flex gap-x-2">
-                    <svg class="h-5 w-5">
-                        <use href="#shopping-cart"></use>
+                </li>
+                <li class="flex gap-2">
+                    <svg class="w-5 h-5">
+                        <use xlink:href="#chat-bubble"></use>
                     </svg>
-                    <a href="#">سبد خرید</a>
-                </div>
-            </div>
+                    <a href="#">دیکشنری</a>
+                </li>
+                <li class="flex gap-2">
+                    <svg class="w-5 h-5">
+                        <use xlink:href="#briefcase"></use>
+                    </svg>
+                    <a href="#">درباره ما</a>
+                </li>
+                <li class="flex gap-2">
+                    <svg class="w-5 h-5">
+                        <use xlink:href="#document-text"></use>
+                    </svg>
+                    <a href="#">بلاگ</a>
+                </li>
+                <li class="flex gap-2">
+                    <svg class="w-5 h-5">
+                        <use xlink:href="#phone-arrow"></use>
+                    </svg>
+                    <a href="#">تماس با ما</a>
+                </li>
+            </ul>
         </div>
-        <!-- Logo Type  -->
-        <div>
-            <svg class="h-10 w-[100px] text-orange-300">
-                <use href="#logo-type"></use>
-            </svg>
-        </div>
-
-        <!-- Cart Icon  -->
-        <div class="cartIcon">
-            <svg class="text-zinc-700 w-6 h-6 dark:text-white">
-                <use href="#shopping-cart"></use>
-            </svg>
-        </div>
-        <!-- Cart sidebar  -->
+        <!-- Footer Of Menu  -->
         <div
+                class="border-t flex flex-col gap-y-6 items-start border-t-gray-100 dark:border-t-white/10 text-orange-300 py-8 px-2.5 mt-8">
+            <div class="flex gap-x-2">
+                <svg class="h-5 w-5">
+                    <use href="#arrow-left-end-on-rectangle"></use>
+                </svg>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'account_app:profile' %}">پروفایل</a>
+                {% else %}
+                <a href="{% url 'account_app:login' %}">ورود | ثبت‌نام</a>
+                {% endif %}
+            </div>
+            <div class="toggle-theme">
+                <!-- Ligth Mode  -->
+                <div class="flex items-center gap-x-2 dark:hidden">
+                    <svg class="h-5 w-5">
+                        <use href="#moon"></use>
+                        <span>تم تیره</span>
+                    </svg>
+                </div>
+                <!-- Dark Mode  -->
+                <div class="hidden dark:flex items-center gap-x-2">
+                    <svg class="h-5 w-5">
+                        <use href="#sun"></use>
+                        <span>تم روشن</span>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex gap-x-2">
+                <svg class="h-5 w-5">
+                    <use href="#shopping-cart"></use>
+                </svg>
+                <a href="#">سبد خرید</a>
+            </div>
+        </div>
+    </div>
+    <!-- Logo Type  -->
+    <div>
+        <svg class="h-10 w-[100px] text-orange-300">
+            <use href="#logo-type"></use>
+        </svg>
+    </div>
+
+    <!-- Cart Icon  -->
+    <div class="cartIcon">
+        <svg class="text-zinc-700 w-6 h-6 dark:text-white">
+            <use href="#shopping-cart"></use>
+        </svg>
+    </div>
+    <!-- Cart sidebar  -->
+    <div
             class="cartSidebar flex flex-col fixed top-0 bottom-0 -left-64 w-64 pt-4 px-4 bg-white dark:bg-zinc-700 z-20 transition-all ">
-            <!-- Header Of Menu  -->
-            <div class=" items-center pb-4 border-b border-b-gray-300 dark:border-b-white/10">
+        <!-- Header Of Menu  -->
+        <div class=" items-center pb-4 border-b border-b-gray-300 dark:border-b-white/10">
 
 
-                <div class="flex justify-between text-zinc-600 dark:text-white">
-                    <div class="cart-close-btn">
-                        <svg class="h-5 w-5">
-                            <use href="#x-mark"></use>
-                        </svg>
-                    </div>
-                    سبد خرید
+            <div class="flex justify-between text-zinc-600 dark:text-white">
+                <div class="cart-close-btn">
+                    <svg class="h-5 w-5">
+                        <use href="#x-mark"></use>
+                    </svg>
                 </div>
+                سبد خرید
             </div>
-            <!-- Body Of Menu  -->
-            <div class=" child:border-b child:border-gray-100 child:dark:border-white/10">
-                <div class="flex gap-x-2.5 mt-5 pb-5">
-                    <!-- Img product -->
-                    <div class="w-[90px] h-[90px] shrink-0 ">
-                        <img src="{% static 'img/products/p1.png' %}" alt="product 1">
-                    </div>
-                    <div class="flex flex-col justify-between gap-y-1.5">
-                        <a href="#">
-                            <h4 class="font-DanaMedium text-zinc-700 dark:text-white text-sm line-clamp-2">
-                                قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
-                            </h4>
-                        </a>
-                        <div>
-                            <span class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
-                                تومان تخفیف</span>
-                            <div class="text-zinc-700 dark:text-white">
-                                <span class="text-base">175,000 </span>
-                                <span class="text-sm">تومان</span>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+        <!-- Body Of Menu  -->
+        <div class=" child:border-b child:border-gray-100 child:dark:border-white/10">
+            <div class="flex gap-x-2.5 mt-5 pb-5">
+                <!-- Img product -->
+                <div class="w-[90px] h-[90px] shrink-0 ">
+                    <img src="{% static 'img/products/p1.png' %}" alt="product 1">
                 </div>
-                <div class="flex gap-x-2.5 mt-5 pb-5">
-                    <!-- Img product -->
-                    <div class="w-[90px] h-[90px] shrink-0 ">
-                        <img src="{% static 'img/products/p2.png' %}" alt="product 2">
-                    </div>
-                    <div class="flex flex-col justify-between gap-y-1.5">
-                        <a href="#">
-                            <h4 class="font-DanaMedium text-zinc-700 dark:text-white text-sm line-clamp-2">
-                                قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
-                            </h4>
-                        </a>
-                        <div>
+                <div class="flex flex-col justify-between gap-y-1.5">
+                    <a href="#">
+                        <h4 class="font-DanaMedium text-zinc-700 dark:text-white text-sm line-clamp-2">
+                            قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
+                        </h4>
+                    </a>
+                    <div>
                             <span class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
                                 تومان تخفیف</span>
-                            <div class="text-zinc-700 dark:text-white">
-                                <span class="text-base">175,000 </span>
-                                <span class="text-sm">تومان</span>
-                            </div>
+                        <div class="text-zinc-700 dark:text-white">
+                            <span class="text-base">175,000 </span>
+                            <span class="text-sm">تومان</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Footer Of Cart  -->
-            <div class="flex justify-between items-center mt-auto mb-8">
-                <div>
-                    <a href="#" class="bg-teal-600 text-white text-base rounded-2xl px-4 py-2">ثبت سفارش</a>
+            <div class="flex gap-x-2.5 mt-5 pb-5">
+                <!-- Img product -->
+                <div class="w-[90px] h-[90px] shrink-0 ">
+                    <img src="{% static 'img/products/p2.png' %}" alt="product 2">
                 </div>
-                <div class="flex flex-col">
-                    <div class="text-gray-300 tracking-tighter text-xs">مبلغ قابل پرداخت</div>
-                    <div class="text-zinc-700 dark:text-white">
-                        <span class="text-xl">350,000 </span>
-                        <span class="text-sm">تومان</span>
+                <div class="flex flex-col justify-between gap-y-1.5">
+                    <a href="#">
+                        <h4 class="font-DanaMedium text-zinc-700 dark:text-white text-sm line-clamp-2">
+                            قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
+                        </h4>
+                    </a>
+                    <div>
+                            <span class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
+                                تومان تخفیف</span>
+                        <div class="text-zinc-700 dark:text-white">
+                            <span class="text-base">175,000 </span>
+                            <span class="text-sm">تومان</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Cart sidebar  -->
+
+        <!-- Footer Of Cart  -->
+        <div class="flex justify-between items-center mt-auto mb-8">
+            <div>
+                <a href="#" class="bg-teal-600 text-white text-base rounded-2xl px-4 py-2">ثبت سفارش</a>
+            </div>
+            <div class="flex flex-col">
+                <div class="text-gray-300 tracking-tighter text-xs">مبلغ قابل پرداخت</div>
+                <div class="text-zinc-700 dark:text-white">
+                    <span class="text-xl">350,000 </span>
+                    <span class="text-sm">تومان</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- End Header  -->
+    <!-- End Cart sidebar  -->
+</div>
+<!-- End Header  -->

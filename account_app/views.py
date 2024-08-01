@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from .forms import CustomLoginForm
 from django.contrib import messages
@@ -42,6 +44,7 @@ class ProductListView(TemplateView):
 
 from django.views.generic import TemplateView
 
+
 class ProfileView(TemplateView):
     template_name = "account_app/profile.html"
 
@@ -50,3 +53,9 @@ class ProfileView(TemplateView):
         user = self.request.user
         context['user'] = user
         return context
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # اگر کاربر وارد نشده است، او را به صفحه ثبت‌نام هدایت کن
+            return redirect('account_app:login')  # فرض کنید نام URL صفحه ثبت‌نام 'signup' است
+        return super().get(request, *args, **kwargs)

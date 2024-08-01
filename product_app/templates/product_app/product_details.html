@@ -3,10 +3,8 @@
 {% load humanize %}
 {% block style %}
     <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.5.2/ionicons.min.css">
-
+    <link rel="stylesheet" href="{% static 'style/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style/comment.css' %}">
     <style>
         /* Global Styles */
         *, *::before, *::after {
@@ -216,11 +214,22 @@
         .tab-content.active, .sub-tab-content.active {
             display: block;
         }
+
+        input, textarea {
+            color: #000000; /* رنگ متن */
+            background-color: #f9f9f9; /* رنگ پس‌زمینه برای تفاوت با متن */
+            border: 1px solid #ccc; /* حاشیه */
+            padding: 0.5rem; /* فاصله داخلی */
+            border-radius: 0.25rem; /* گوشه‌های گرد */
+            font-size: 1rem; /* اندازه فونت */
+        }
+
     </style>
+
 {% endblock %}
 
 {% block main %}
-    <main class="text-white font-DanaRegular py-[150px]">
+    <main class="text-white font-DanaRegular md:py-[150px]">
         <div class="container mx-auto p-4">
             <!-- Main Container -->
             <div class="flex flex-col lg:flex-row-reverse gap-6">
@@ -271,12 +280,12 @@
                         </div>
                     {% endif %}
 
-                    <p class="text-zinc-300 mt-2">
+                    <p class="text-zinc-300 mt-2 mb-bmd-15">
                         {{ product.description|slice:":30" }}{% if product.description|length > 30 %}...{% endif %}
                     </p>
 
                     <!-- بخش دکمه و تعداد -->
-                    <div style="position: absolute; bottom: 24px; left: 24px; display: flex; align-items: center; gap: 16px;">
+                    <div style="position: absolute; bottom: 24px;left: 24px; display: flex; align-items: center; gap: 16px;">
                         <!-- بخش تعداد -->
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <label for="quantity" style="color: #ffffff; font-size: 1rem;">تعداد:</label>
@@ -326,139 +335,190 @@
                         </ul>
                     </div>
                 </div>
-                <div id="content-reviews" class="tab-content p-4 rounded-2xl">
+                <div id="content-reviews" class="tab-content">
                     <div class="bg-zinc-800 p-4 rounded-2xl">
                         <!-- Sub-Tabs for Reviews -->
-                        <div class="sub-tabs flex border-b border-zinc-600 rounded-2xl">
-                            <button id="sub-tab-reviews-all" class="w-1/3 py-2 text-center sub-tab-button">همه نظرات
+                        <div class="sub-tabs flex border-b border-zinc-600 rounded-2xl mb-4">
+                            <button id="sub-tab-reviews-all" class="w-1/3 py-2 text-center sub-tab-button active">همه
+                                نظرات
                             </button>
                             <button id="sub-tab-reviews-my" class="w-1/3 py-2 text-center sub-tab-button">نظرات من
                             </button>
                             <button id="sub-tab-reviews-add" class="w-1/3 py-2 text-center sub-tab-button">افزودن نظر
                             </button>
                         </div>
+
                         <!-- Sub-Tab Contents -->
-                        <div id="sub-content-reviews-all" class="sub-tab-content p-4 active">
+                        <div id="sub-content-reviews-all" class="sub-tab-content active scrollable-section">
                             {% for review in product_reviews %}
-                                <div class="bg-zinc-800 p-4 rounded-lg shadow-inner mb-4">
+                                <div class="review-item bg-zinc-700 p-4 mb-4 rounded-lg shadow-md">
                                     <div class="flex items-start mb-4">
                                         <img src="https://via.placeholder.com/40" alt="User Avatar"
-                                             class="w-10 h-10 rounded-full mr-3">
-                                        <div>
+                                             class="w-10 h-10 rounded-full">
+                                        <div class="ml-4 flex-1">
                                             <h6 class="font-semibold">{{ review.author }}</h6>
-                                            <p class="text-sm">{{ review.comment }}</p>
+                                            <p class="text-zinc-300">{{ review.comment }}</p>
+                                            {% if review.replies.exists %}
+                                                <div class="ml-6 mt-4">
+                                                    {% for reply in review.replies.all %}
+                                                        <div class="review-item bg-zinc-600 p-2 rounded-lg mb-2">
+                                                            <p><strong>{{ reply.author }}:</strong> {{ reply.comment }}
+                                                            </p>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <!-- Reply Form -->
+                                            <button onclick="toggleReplyForm({{ review.id }})"
+                                                    class="text-blue-400 mt-2">پاسخ
+                                            </button>
+                                            <div id="reply-form-{{ review.id }}" class="reply-form mt-2 hidden">
+                                                <form method="post" action="{% url 'add_reply' review.id %}">
+                                                    {% csrf_token %}
+                                                    <textarea name="comment" rows="3"
+                                                              placeholder="پاسخ خود را بنویسید..."
+                                                              class="w-full p-2 rounded-lg"
+                                                              style="color: black"></textarea>
+                                                    <button type="submit"
+                                                            class="mt-2 bg-green-500 text-white py-1 px-4 rounded-lg">
+                                                        ارسال پاسخ
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             {% endfor %}
                         </div>
-                        <div id="sub-content-reviews-my" class="sub-tab-content p-4">
-                            <p>این بخش شامل نظرات شما می‌باشد که در اینجا نمایش داده می‌شود.</p>
+
+                        <div id="sub-content-reviews-my" class="sub-tab-content scrollable-section">
+                            <h6 class="text-lg font-semibold mb-2 ">نظرات من</h6>
+                            {% if user_reviews %}
+                                {% for review in user_reviews %}
+                                    <div class="review-item bg-zinc-700 p-4 mb-4 rounded-lg shadow-md ">
+                                        <div class="flex items-start mb-4">
+                                            <img src="https://via.placeholder.com/40" alt="User Avatar"
+                                                 class="w-10 h-10 rounded-full">
+                                            <div class="ml-4 flex-1">
+                                                <h6 class="font-semibold">{{ review.author }}</h6>
+                                                <p class="text-zinc-300">{{ review.comment }}</p>
+                                                <p class="text-xs text-gray-400">{{ review.created_at|date:"d M Y H:i" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>شما هنوز نظری برای این محصول ارسال نکرده‌اید.</p>
+                            {% endif %}
                         </div>
-                        <div id="sub-content-reviews-add" class="sub-tab-content p-4">
+
+                        <div id="sub-content-reviews-add" class="sub-tab-content">
                             <div class="bg-zinc-800 p-4 rounded-lg shadow-inner">
                                 <h6 class="text-lg font-semibold mb-2">افزودن نظر</h6>
-                                <textarea class="w-full p-2 rounded-lg bg-zinc-700 text-white mb-2" rows="3"
-                                          placeholder="نظر خود را بنویسید..."></textarea>
-                                <button class="bg-teal-500 hover:bg-teal-400 text-white py-2 px-4 rounded-lg">ارسال
-                                    نظر
-                                </button>
+                                <form method="post" action="{% url 'product_detail' product.id %}"
+                                      class="space-y-4 p-4 border border-gray-300 rounded-lg shadow-md bg-white">
+                                    {% csrf_token %}
+
+                                    <div class="mb-4">
+                                        <label for="{{ form.comment.id_for_label }}"
+                                               class="block text-gray-700 font-medium">نظر</label>
+                                        {{ form.comment }}
+                                        {% if form.comment.errors %}
+                                            <p class="text-red-500 text-sm">{{ form.comment.errors }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="{{ form.rating.id_for_label }}"
+                                               class="block text-gray-700 font-medium">امتیاز</label>
+                                        {{ form.rating }}
+                                        {% if form.rating.errors %}
+                                            <p class="text-red-500 text-sm">{{ form.rating.errors }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <input type="hidden" name="parent_id" value=""/>
+
+                                    <button type="submit"
+                                            class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">
+                                        ارسال نظر
+                                    </button>
+                                </form>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </main>
 {% endblock %}
 
 {% block script %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Tabs Initialization
-            const tabs = document.querySelectorAll('button[id^="tab-"]');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const subTabs = document.querySelectorAll('button[id^="sub-tab-"]');
-            const subTabContents = document.querySelectorAll('.sub-tab-content');
-
-            const slider = document.getElementById('slider');
-            const slides = slider.querySelectorAll('.swiper-slide');
-            const prevButton = document.getElementById('prev');
-            const nextButton = document.getElementById('next');
-            let currentIndex = 0;
-
-            // Manage main tabs
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function () {
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    const targetId = this.id.replace('tab-', 'content-');
-                    document.getElementById(targetId).classList.add('active');
-
-                    tabs.forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    this.classList.add('active');
-
-                    // Toggle sub-tabs visibility based on the active main tab
-                    if (this.id === 'tab-reviews') {
-                        subTabs.forEach(subTab => subTab.classList.add('active'));
-                    } else {
-                        subTabs.forEach(subTab => subTab.classList.remove('active'));
-                    }
-                });
-            });
-
-            // Manage sub-tabs
-            subTabs.forEach(tab => {
-                tab.addEventListener('click', function () {
-                    subTabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    const targetId = this.id.replace('sub-tab-', 'sub-content-');
-                    document.getElementById(targetId).classList.add('active');
-
-                    subTabs.forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                });
-            });
-
-            // Default Tab Initialization
-            document.getElementById('tab-description').click();
-
-            // Slider Functionality
-            function updateSlider() {
-                const offset = -currentIndex * 100;
-                slider.style.transform = `translateX(${offset}%)`;
-
-                // Show or hide slider buttons
-                prevButton.classList.toggle('show', currentIndex > 0);
-                nextButton.classList.toggle('show', currentIndex < slides.length - 1);
+        <script>
+        function updateBorder() {
+            var container = document.querySelector('.container');
+            if (window.innerWidth < 680) {
+                container.style.borderBottom = '1px solid #ccc'; // Add border if less than 680px
+            } else {
+                container.style.borderBottom = 'none'; // Remove border if 680px or more
             }
+        }
 
-            prevButton.addEventListener('click', function () {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSlider();
-                }
-            });
-
-            nextButton.addEventListener('click', function () {
-                if (currentIndex < slides.length - 1) {
-                    currentIndex++;
-                    updateSlider();
-                }
-            });
-
-            // Default Slider Initialization
-            updateSlider();
-        });
+        window.addEventListener('resize', updateBorder);
+        window.addEventListener('load', updateBorder);
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function toggleReplyForm(reviewId) {
+            const form = document.getElementById(`reply-form-${reviewId}`);
+            form.classList.toggle('hidden');
+        }
+
+        function activateTab(tabId) {
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            const tabButton = document.getElementById(tabId);
+            tabButton.classList.add('active');
+            const tabContentId = `content-${tabId.replace('tab-', '')}`;
+            document.getElementById(tabContentId).classList.add('active');
+        }
+
+        function activateSubTab(subTabId) {
+            document.querySelectorAll('.sub-tab-button').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.sub-tab-content').forEach(content => content.classList.remove('active'));
+
+            const subTabButton = document.getElementById(subTabId);
+            subTabButton.classList.add('active');
+            const subTabContentId = `sub-content-${subTabId.replace('sub-tab-', '')}`;
+            document.getElementById(subTabContentId).classList.add('active');
+        }
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function () {
+                activateTab(this.id);
+                if (this.id === 'tab-reviews') {
+                    // When the "Reviews" tab is activated, activate all sub-tabs
+                    document.querySelectorAll('.sub-tab-button').forEach(btn => btn.classList.add('active'));
+                } else {
+                    document.querySelectorAll('.sub-tab-button').forEach(btn => btn.classList.remove('active'));
+                }
+            });
+        });
+
+        document.querySelectorAll('.sub-tab-button').forEach(button => {
+            button.addEventListener('click', function () {
+                activateSubTab(this.id);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Tabs
+            activateTab('tab-description');
+
             // Swiper Initialization
             const swiper = new Swiper(".swiper", {
                 effect: "cube",
@@ -582,3 +642,5 @@
 
     </script>
 {% endblock %}
+
+

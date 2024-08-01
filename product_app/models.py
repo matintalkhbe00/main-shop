@@ -22,9 +22,18 @@ class Product(models.Model):
 
     def calculate_average_rating(self):
         reviews = self.reviews.all()
-        if reviews:
-            return sum(review.rating for review in reviews) / len(reviews)
-        return 0
+        sum_rating = 0.0
+        count = 0
+
+        for review in reviews:
+            if review.rating is not None:
+                sum_rating += review.rating
+                count += 1
+
+        if count > 0:
+            return sum_rating / count
+        else:
+            return 0.0
 
     def __str__(self):
         return self.name
@@ -59,9 +68,11 @@ class ProductFeature(models.Model):
 class ProductReview(models.Model):
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE, verbose_name='محصول')
     author = models.CharField(max_length=255, verbose_name='نویسنده')
-    rating = models.FloatField(verbose_name='امتیاز')
+    rating = models.FloatField(verbose_name='امتیاز', null=True, blank=True)
     comment = models.TextField(verbose_name='نظر')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE,
+                               verbose_name='پاسخ به')
 
     def __str__(self):
         return f"نظر {self.author} بر روی {self.product.name}"
@@ -69,3 +80,4 @@ class ProductReview(models.Model):
     class Meta:
         verbose_name = 'نظر محصول'
         verbose_name_plural = 'نظرات محصول'
+        ordering = ['-created_at']
