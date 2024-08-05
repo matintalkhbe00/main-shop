@@ -52,7 +52,7 @@
                         {% endif %}
                     </div>
                     <!-- Product title -->
-                    <a href="{% url 'product_detail' product.id %}" class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
+                    <a href="{% url 'product_app:product_detail' product.id %}" class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
                         {{ product.name }}
                     </a>
                     <!-- Price -->

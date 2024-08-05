@@ -1,3 +1,68 @@
+# class ProductAddOrderView(LoginRequiredMixin, View):
+#     def post(self, request, pk):
+#         user = request.user
+#         product = get_object_or_404(Product, pk=pk)
+#         quantity = int(request.POST.get('quantity', 1))
+#
+#         # دریافت یا ایجاد سفارش
+#         order, created = Order.objects.get_or_create(status="notRegistered", user=user)
+#
+#         # بررسی وجود آیتم محصول در سفارش
+#         order_item, item_created = OrderItem.objects.get_or_create(
+#             order=order,
+#             product=product,
+#             defaults={'quantity': quantity, 'price': product.get_final_price()}
+#         )
+#
+#         if not item_created:
+#             # به‌روزرسانی تعداد و قیمت آیتم موجود
+#             order_item.quantity += quantity
+#             order_item.price = product.get_final_price()
+#             order_item.save()
+#
+#         # به‌روزرسانی قیمت کل سفارش
+#         order.update_total_price()
+#
+#         return redirect("product_app:order_detail")
+#
+#
+# from django.db import transaction
+#
+# class ProductAddOrderView(LoginRequiredMixin, View):
+#     @transaction.atomic
+#     def post(self, request, pk):
+#         user = request.user
+#         product = get_object_or_404(Product, pk=pk)
+#         quantity = int(request.POST.get('quantity', 1))
+#
+#         # دریافت یا ایجاد سفارش
+#         order, created = Order.objects.get_or_create(status="notRegistered", user=user)
+#
+#         # بررسی وجود آیتم محصول در سفارش
+#         order_item, item_created = OrderItem.objects.get_or_create(
+#             order=order,
+#             product=product,
+#             defaults={'quantity': quantity, 'price': product.get_final_price()}
+#         )
+#
+#         if not item_created:
+#             # به‌روزرسانی تعداد و قیمت آیتم موجود
+#             order_item.quantity += quantity
+#             order_item.price = product.get_final_price()
+#             order_item.save()
+#
+#         # به‌روزرسانی قیمت کل سفارش
+#         order.update_total_price()
+#
+#         return redirect("product_app:order_detail")
+
+
+
+# //////////////////////
+
+
+from itertools import product
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
@@ -6,20 +71,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
 
 from account_app.models import Address
 from .forms import ProductReviewForm, ReplyForm, OrderItemUpdateForm, OrderItemDeleteForm, AddressForm
 from .models import Product, ProductReview, Order, OrderItem, DiscountCode
-
-
-from django.shortcuts import get_object_or_404, redirect
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
-from .models import Product, Order, OrderItem, DiscountCode
-
 
 
 def add_reply(request, review_id):
@@ -88,50 +146,11 @@ class ProductListView(ListView):
 # ////////////////////////////////////////////////////////////////
 
 
-
-# class ProductAddOrderView(View):
-#     @transaction.atomic
-#     def post(self, request, pk):
-#         product = get_object_or_404(Product, pk=pk)
-#         quantity = int(request.POST.get('quantity', 1))
-#         discount_code = request.POST.get('discount_code', '').strip()
-#
-#         # دریافت یا ایجاد سفارش
-#         try:
-#             order = Order.objects.get(user=request.user, status="notRegistered")
-#         except Order.DoesNotExist:
-#             order = Order.objects.create(user=request.user, status="notRegistered")
-#
-#         # بررسی وجود آیتم محصول در سفارش
-#         try:
-#             order_item = OrderItem.objects.get(order=order, product=product)
-#             # اگر آیتم موجود است، به‌روزرسانی تعداد و قیمت آن
-#             order_item.quantity += quantity
-#             order_item.price = product.get_final_price()
-#             order_item.save()
-#         except OrderItem.DoesNotExist:
-#             # اگر آیتم وجود ندارد، آن را ایجاد می‌کنیم
-#             OrderItem.objects.create(
-#                 order=order,
-#                 product=product,
-#                 quantity=quantity,
-#                 price=product.get_final_price()
-#             )
-#
-#         # به‌روزرسانی قیمت کل سفارش
-#         order.update_total_price()
-#
-#         # اعمال کد تخفیف
-#         if discount_code:
-#             try:
-#                 discount = DiscountCode.objects.get(name=discount_code)
-#                 if discount.is_valid():
-#                     order.discount_code = discount
-#                     order.save()
-#             except DiscountCode.DoesNotExist:
-#                 pass
-#
-#         return redirect("product_app:order_detail")
+from django.shortcuts import get_object_or_404, redirect
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from .models import Product, Order, OrderItem, DiscountCode
 
 
 class ProductAddOrderView(LoginRequiredMixin, View):
@@ -140,29 +159,43 @@ class ProductAddOrderView(LoginRequiredMixin, View):
         user = request.user
         product = get_object_or_404(Product, pk=pk)
         quantity = int(request.POST.get('quantity', 1))
-        order = Order.objects.filter(status="notRegistered", user=user)
+        discount_code = request.POST.get('discount_code', '').strip()
 
-        if order:
-            order = Order.objects.get(status="notRegistered", user=user)
-            flag = False
-            for item in order.items.all():
-                if item.product == product:
-                    flag = True
-                    OrderItem.objects.get(id=item.id, order=order).delete()
-                    OrderItem.objects.create(order=order, product=product, quantity=quantity+item.quantity, price=product.get_final_price())
-            if not flag:
-                OrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.get_final_price())
-            pass
-        else:
+        # دریافت یا ایجاد سفارش
+        # order, created = Order.objects.get_or_create(status="notRegistered", user=user)
+
+        order = Order.objects.filter(user=user, status="notRegistered")
+        if not order:
             order = Order.objects.create(user=user)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity , price=product.price)
 
-        # order_item.save()
+        # بررسی وجود آیتم محصول در سفارش
+        order_item, item_created = OrderItem.objects.get_or_create(
+            order=order,
+            product=product,
+            defaults={'quantity': quantity, 'price': product.get_final_price()}
+        )
+
+        if not item_created:
+            # به‌روزرسانی تعداد و قیمت آیتم موجود
+            order_item.quantity += quantity
+            order_item.price = product.get_final_price()
+            order_item.save()
 
         # به‌روزرسانی قیمت کل سفارش
         order.update_total_price()
 
+        if discount_code:
+            try:
+                discount_code = DiscountCode.objects.get(name=discount_code)
+                if discount_code.is_valid():
+                    order.discount_code = discount_code
+            except DiscountCode.DoesNotExist:
+                pass
+
+        order.save()
+
         return redirect("product_app:order_detail")
+
 
 class OrderDetailView(LoginRequiredMixin, TemplateView):
     template_name = 'product_app/order_details.html'
@@ -183,17 +216,14 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
 
         return context
 
-class ConfirmOrderView(LoginRequiredMixin, View):
-    def get(self, request):
-        order = Order.objects.get(user = request.user , status="notRegistered")
-        order.status = "pending"
-        order.save()
-        return redirect("account_app:profile")
+
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.urls import reverse
+from django.shortcuts import redirect
+from .models import Order, DiscountCode
 
 
-
-
-# ////////////////////////////////////////// Order development
 class ApplyDiscountView(View):
     def post(self, request):
         discount_code = request.POST.get('discount_code')
@@ -318,3 +348,35 @@ def select_address(request, address_id):
     request.session['selected_address_id'] = address.id
 
     return redirect('product_app:order_detail')
+
+
+
+class ProductAddOrderView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        user = request.user
+        order = Order.objects.filter(status = "notRegistered" , user = user)
+        product = get_object_or_404(Product, pk=pk)
+        quantity = int(request.POST.get('quantity',1))
+        if order:
+            order = Order.objects.get(status="notRegistered", user=user)
+            flag = False
+            for item in order.items.all():
+                if item.product == product:
+                    flag = True
+                    OrderItem.objects.get(id=item.id, order=order).delete()
+                    OrderItem.objects.create(order=order, product=product, quantity=quantity+item.quantity, price=product.get_final_price())
+            if not flag:
+                OrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.get_final_price())
+            pass
+        else:
+            order = Order.objects.create(user=user)
+            OrderItem.objects.create(order=order, product=product, quantity=quantity , price=product.price)
+
+
+        return redirect("product_app:order_detail")
+
+
+class OrderDetailView(View):
+    def get(self, request):
+        order = Order.objects.all()
+        return render(request, "product_app/order_details.html" , {"order":order})

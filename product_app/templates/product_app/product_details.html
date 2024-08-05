@@ -285,22 +285,24 @@
                     </p>
 
                     <!-- بخش دکمه و تعداد -->
-                    <div style="position: absolute; bottom: 24px;left: 24px; display: flex; align-items: center; gap: 16px;">
-                        <!-- بخش تعداد -->
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label for="quantity" style="color: #ffffff; font-size: 1rem;">تعداد:</label>
-                            <input type="number" id="quantity" name="quantity" min="1" value="1"
-                                   style="background-color: #1f2937; color: #ffffff; border-radius: 0.5rem; padding: 0.25rem 0.5rem; text-align: center; width: 60px;">
-                        </div>
-                        <!-- دکمه ثبت سفارش -->
-                        <a href="#"
-                           style="background-color: #0d9488; color: #ffffff; font-size: 1.125rem; border-radius: 1rem; padding: 0.75rem 1.5rem; text-decoration: none;
-              transition: background-color 0.3s ease, transform 0.3s ease; display: inline-block; font-weight: bold;"
-                           onmouseover="this.style.backgroundColor='#0f766e'; this.style.transform='scale(1.1)';"
-                           onmouseout="this.style.backgroundColor='#0d9488'; this.style.transform='scale(1)';">
-                            ثبت سفارش
-                        </a>
-                    </div>
+                    {% if product.status == 'in_stock' %}
+                        <form action="{% url 'product_app:product_add' product.id %}" method="post"
+                              style="position: absolute; bottom: 24px; left: 24px; display: flex; align-items: center; gap: 16px;">
+                            {% csrf_token %}
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label for="quantity" style="color: #ffffff; font-size: 1rem;">تعداد:</label>
+                                <input type="number" id="quantity" name="quantity" min="1" value="1"
+                                       style="background-color: #1f2937; color: #ffffff; border-radius: 0.5rem; padding: 0.25rem 0.5rem; text-align: center; width: 60px;">
+                            </div>
+                            <button type="submit"
+                                    style="background-color: #0d9488; color: #ffffff; font-size: 1.125rem; border-radius: 1rem; padding: 0.75rem 1.5rem; text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease; display: inline-block; font-weight: bold;"
+                                    onmouseover="this.style.backgroundColor='#0f766e'; this.style.transform='scale(1.1)';"
+                                    onmouseout="this.style.backgroundColor='#0d9488'; this.style.transform='scale(1)';">
+                                ثبت سفارش
+                            </button>
+                        </form>
+                    {% endif %}
 
 
                 </div>
@@ -373,7 +375,8 @@
                                                     class="text-blue-400 mt-2">پاسخ
                                             </button>
                                             <div id="reply-form-{{ review.id }}" class="reply-form mt-2 hidden">
-                                                <form method="post" action="{% url 'add_reply' review.id %}">
+                                                <form method="post"
+                                                      action="{% url 'product_app:add_reply' review.id %}">
                                                     {% csrf_token %}
                                                     <textarea name="comment" rows="3"
                                                               placeholder="پاسخ خود را بنویسید..."
@@ -415,7 +418,7 @@
                         <div id="sub-content-reviews-add" class="sub-tab-content">
                             <div class="bg-zinc-800 p-4 rounded-lg shadow-inner">
                                 <h6 class="text-lg font-semibold mb-2">افزودن نظر</h6>
-                                <form method="post" action="{% url 'product_detail' product.id %}"
+                                <form method="post" action="{% url 'product_app:product_detail' product.id %}"
                                       class="space-y-4 p-4 border border-gray-300 rounded-lg shadow-md bg-white">
                                     {% csrf_token %}
 
@@ -458,7 +461,7 @@
 {% endblock %}
 
 {% block script %}
-        <script>
+    <script>
         function updateBorder() {
             var container = document.querySelector('.container');
             if (window.innerWidth < 680) {

@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!-- Start Header  -->
 <!-- Header Of Windows lg & xl  -->
 <header
@@ -65,9 +66,9 @@
                             class="opacity-0 invisible absolute top-full group-hover:opacity-100 group-hover:visible w-[400px] p-5 left-0 space-y-4 text-zinc-700 bg-white text-base border-t-[3px] border-orange-300 tracking-normal shadow-normal rounded-2xl transition-all dark:text-white dark:bg-zinc-700 delay-75">
                         <!-- Cart Header  -->
                         <div class="flex justify-between items-center text-xs tracking-tighter">
-                            <span class="text-gray-300 text-sm">1 مورد</span>
+                            <span class="text-gray-300 text-sm">{{ count }} مورد</span>
                             <div class="text-orange-300 flex items-center">
-                                <a href="#">مشاهده ی سبد خرید</a>
+                                <a href="{% url 'product_app:order_detail' %}">مشاهده ی سبد خرید</a>
                                 <svg class="w-5 h-5">
                                     <use xlink:href="#chevron-left-mini"></use>
                                 </svg>
@@ -76,45 +77,113 @@
                         <!-- Cart Body  -->
                         <div
                                 class="border-b border-b-gray-300 dark:border-b-white/10 divide-y divide-gray-200 dark:divide-white/10 child:py-5 pb-1">
-                            <div class="flex gap-x-2.5">
-                                <!-- Img product -->
-                                <div class="w-30 h-30">
-                                    <img src="{% static 'img/products/p1.png' %}" alt="product 1"/>
-                                </div>
-                                <div class="flex flex-col justify-between">
-                                    <a href="#">
-                                        <h4
-                                                class="font-DanaMedium text-zinc-700 dark:text-white text-base line-clamp-2">
-                                            قهوه اسپرسو بن مانو مدل پریسکا 250 گرمی
-                                        </h4>
-                                    </a>
-                                    <div>
-                                            <span
-                                                    class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">14.500
+                            {% if order %}
+                                {% for item in order.items.all %}
+                                    {% if item.product.status == 'in_stock' %}
+                                        <div class="flex gap-x-2.5">
+                                            <!-- Img product -->
+                                            <div class="w-30 h-30">
+                                                <img src="{{ item.product.images.first.image.url }}"
+                                                     alt="{{ item.product.name }}"/>
+                                            </div>
+                                            <div class="flex flex-col justify-between">
+
+                                                <h4
+                                                        class="font-DanaMedium text-zinc-700 dark:text-white text-base line-clamp-2">
+                                                    {% if item.product %}
+                                                        <a href="{% url 'product_app:product_detail' item.product.id %}"
+                                                           class="hover:text-teal-600 dark:hover:text-emerald-400">
+                                                            {{ item.product.name }}
+                                                        </a>
+                                                    {% else %}
+                                                        <span>{{ item.product.name }}</span>
+                                                    {% endif %}
+
+                                                </h4>
+                                                <p><strong>تعداد:</strong><span
+                                                        style="padding-right: 5px">{{ item.quantity }}</span></p>
+
+                                                {#                                            <form class="update-form" method="post"#}
+                                                {#                                                  action="{% url 'product_app:update_order_item' %}">#}
+                                                {#                                                {% csrf_token %}#}
+                                                {#                                                <p><strong>تعداد:</strong>#}
+                                                {#                                                    <input type="number" name="quantity" value="{{ item.quantity }}"#}
+                                                {#                                                           min="1" required#}
+                                                {#                                                           style="background-color: #1f2937; color: #ffffff; border-radius: 0.5rem; padding: 0.25rem 0.5rem; text-align: center; width: 60px;">#}
+                                                {#                                                    <input type="hidden" name="item_id" value="{{ item.id }}">#}
+                                                {#                                                    <button type="submit">به‌روزرسانی</button>#}
+                                                {#                                            </form>#}
+
+                                                <div>
+
+                                                    {#                                            ///////////////////////////////#}
+                                                    {% if item.product.status == 'in_stock' %}
+                                                        {% if item.product.discount_percentage %}
+                                                            <span class="text-teal-600 dark:text-emerald-500 text-xs tracking-tighter">{{ item.get_discounted_price|intcomma }}
                                                 تومان تخفیف</span>
-                                        <div class="text-zinc-700 dark:text-white">
-                                            <span class="text-xl">175,000 </span>
-                                            <span class="text-sm">تومان</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <div class="flex gap-x-2 md:gap-2.5 pb-2.5 items-center">
+                                                        {% if item.product.status == 'in_stock' %}
+                                                            {% if item.product.discount_percentage %}
+
+                                                                <div class="flex items-center text-gray-400 line-through decoration-red-400">
+                                                                    <span class="text-sm md:text-xl">{{ item.product.price|intcomma }}</span>
+                                                                    <!-- استفاده از فیلتر intcomma -->
+                                                                    <span class="hidden md:inline-block text-sm tracking-tighter">تومان</span>
+                                                                </div>
+                                                                <div class="flex items-center text-teal-600 dark:text-emerald-500">
+                                    <span class="text-base md:text-xl font-DanaDemiBold">
+                                        {{ item.product.get_final_price|intcomma }}  <!-- استفاده از فیلتر intcomma -->
+                                    </span>
+                                                                    <span class="text-xs md:text-sm tracking-tighter">تومان</span>
+                                                                </div>
+
+                                                            {% else %}
+                                                                <div class="flex items-center text-teal-600 dark:text-emerald-500">
+                                    <span class="text-base md:text-xl font-DanaDemiBold">
+                                        {{ item.product.price|intcomma }}  <!-- استفاده از فیلتر intcomma -->
+                                    </span>
+                                                                    <span class="text-xs md:text-sm tracking-tighter">تومان</span>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <div class="text-red-400 text-base md:text-xl">
+                                                                محصول موجود نیست
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {#                                            ///////////////////////////////#}
+
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    {% endif %}
+                                {% empty %}
+                                    <p><strong>محصولی برای نمایش وجود ندارد</strong></p>
+                                {% endfor %}
+                            {% else %}
+                                <p><strong>محصولی برای نمایش وجود ندارد</strong></p>
+                            {% endif %}
                         </div>
 
                         <!-- Cart Footer Btn & SumProudact -->
                         <div class="flex justify-between items-center">
                             <!-- Sum Proudact -->
+
                             <div class="flex flex-col">
                                 <div class="text-gray-300 tracking-tighter text-xs">مبلغ قابل پرداخت</div>
                                 <div class="text-zinc-700 dark:text-white">
-                                    <span class="text-xl">350,000 </span>
+                                    <span class="text-xl"> {{ order.total_price|intcomma }}</span>
                                     <span class="text-sm">تومان</span>
                                 </div>
                             </div>
+                            
+
                             <!-- Button -->
                             <div
                                     class="bg-teal-600 text-white dark:bg-emerald-500 inline px-7 py-[14px] rounded-xl text-xl tracking-tighter hover:bg-teal-700 dark:hover:bg-emerald-600 transition-all">
-                                <a href="#">ثبت سفارش</a>
+                                <a href="{% url 'product_app:order_detail' %}">ثبت سفارش</a>
                             </div>
                         </div>
                     </div>
@@ -138,14 +207,12 @@
             {% if user.is_authenticated %}
                 <!-- اگر کاربر وارد شده باشد، لینک یا پیامی دیگر نمایش داده می‌شود -->
                 <a href="{% url 'account_app:profile' %}"
-                   class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14">
-                    <svg class="w-8 h-8 rotate-180">
-                        <use xlink:href="#arrow-right-end-on-rectangle"></use>
-                    </svg>
+                   class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14"
+                   style="margin-right: auto; margin-left: auto;">
+
                     <span class="tracking-tightest hidden lg:inline-block">پروفایل</span>
                 </a>
             {% else %}
-                <!-- اگر کاربر وارد نشده باشد، لینک ورود/ثبت‌نام نمایش داده می‌شود -->
                 <a href="{% url 'account_app:login' %}"
                    class="flex items-center gap-2.5 rounded-[100px] hover:bg-orange-200/10 h-14 xl:h-14">
                     <svg class="w-8 h-8 rotate-180">
@@ -256,7 +323,7 @@
                 {% if user.is_authenticated %}
                     <a href="{% url 'account_app:profile' %}">پروفایل</a>
                 {% else %}
-                <a href="{% url 'account_app:login' %}">ورود | ثبت‌نام</a>
+                    <a href="{% url 'account_app:login' %}">ورود | ثبت‌نام</a>
                 {% endif %}
             </div>
             <div class="toggle-theme">

@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+
+from product_app.forms import AddressForm
 from .forms import CustomLoginForm
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -59,3 +61,18 @@ class ProfileView(TemplateView):
             # اگر کاربر وارد نشده است، او را به صفحه ثبت‌نام هدایت کن
             return redirect('account_app:login')  # فرض کنید نام URL صفحه ثبت‌نام 'signup' است
         return super().get(request, *args, **kwargs)
+
+
+@login_required
+def add_address(request):
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            return redirect('product_app:order_details')  # یا هر URL دیگری که مناسب باشد
+    else:
+        form = AddressForm()
+
+    return render(request, 'account_app/add_address.html', {'form': form})
