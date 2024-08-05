@@ -13,13 +13,11 @@ from account_app.models import Address
 from .forms import ProductReviewForm, ReplyForm, OrderItemUpdateForm, OrderItemDeleteForm, AddressForm
 from .models import Product, ProductReview, Order, OrderItem, DiscountCode
 
-
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from .models import Product, Order, OrderItem, DiscountCode
-
 
 
 def add_reply(request, review_id):
@@ -88,7 +86,6 @@ class ProductListView(ListView):
 # ////////////////////////////////////////////////////////////////
 
 
-
 # class ProductAddOrderView(View):
 #     @transaction.atomic
 #     def post(self, request, pk):
@@ -149,13 +146,15 @@ class ProductAddOrderView(LoginRequiredMixin, View):
                 if item.product == product:
                     flag = True
                     OrderItem.objects.get(id=item.id, order=order).delete()
-                    OrderItem.objects.create(order=order, product=product, quantity=quantity+item.quantity, price=product.get_final_price())
+                    OrderItem.objects.create(order=order, product=product, quantity=quantity + item.quantity,
+                                             price=product.get_final_price())
             if not flag:
-                OrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.get_final_price())
+                OrderItem.objects.create(order=order, product=product, quantity=quantity,
+                                         price=product.get_final_price())
             pass
         else:
             order = Order.objects.create(user=user)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity , price=product.price)
+            OrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.price)
 
         # order_item.save()
 
@@ -164,7 +163,8 @@ class ProductAddOrderView(LoginRequiredMixin, View):
 
         return redirect("product_app:order_detail")
 
-class OrderDetailView(LoginRequiredMixin, TemplateView):
+
+class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
     template_name = 'product_app/order_details.html'
 
     def get_context_data(self, **kwargs):
@@ -183,14 +183,38 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
 
         return context
 
+
 class ConfirmOrderView(LoginRequiredMixin, View):
     def get(self, request):
-        order = Order.objects.get(user = request.user , status="notRegistered")
+        order = Order.objects.get(user=request.user, status="notRegistered")
         order.status = "pending"
         order.save()
         return redirect("account_app:profile")
 
 
+class OrderDetailsView(LoginRequiredMixin, TemplateView):
+    template_name = 'product_app/order_details.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        pk = self.kwargs.get('pk')
+
+        order = get_object_or_404(Order , user=user, id = pk)
+        context.update({
+            'user': user,
+            'order': order,
+            'address': order.address,
+            'total_price': order.total_price,
+            'original_price' : order.original_price,
+            'discount' : order.discount_code.discount,
+            'discount_price' : order.original_price - order.total_price,
+            'created_at': order.created_at,
+            'status': order.status,
+
+        })
+
+        return context
 
 
 # ////////////////////////////////////////// Order development

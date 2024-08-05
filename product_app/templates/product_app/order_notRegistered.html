@@ -524,46 +524,6 @@
         }
 
     </style>
-    <style>
-
-.status-label.notRegistered {
-    color: #f44336; /* Red for not registered */
-}
-
-.status-label.pending {
-    color: #ff9800; /* Orange for pending */
-}
-
-.status-label.shipped {
-    color: #2196f3; /* Blue for shipped */
-}
-
-.status-label.delivered {
-    color: #4caf50; /* Green for delivered */
-}
-
-.status-label.cancelled {
-    color: #000000; /* Gray for cancelled */
-}
-
-.price, .discount, .discount-price, .total-price {
-    {#font-weight: bold;#}
-}
-
- .total-price {
-    color: #38bdf8;
-     font-weight: bold;
-}
-
-.discount , .price{
-    color: #2dd4bf; /* Dark red for discount */
-}
-
-.discount-price {
-    color: #2dd4bf; /* Same as discount for consistency */
-}
-
-    </style>
 {% endblock %}
 
 {% block main %}
@@ -572,101 +532,143 @@
             <div class="order-header">
                 <h1>جزئیات سفارشات</h1>
                 <nav>
-                    <a href="{% url 'product_app:product_list' %}">بازگشت به لیست سفارشات</a>
+                    <a href="{% url 'product_app:product_list' %}">بازگشت به لیست محصولات</a>
                 </nav>
+                {% if orders %}
+                    {% for order in orders %}
+                        {% if order.items.all %}
+                            <div class="order-actions">
+                                <a href="{% url 'product_app:order_confirm' %}" class="btn-confirm">تایید سفارش</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endif %}
+
             </div>
 
 
             <main>
-                {% if order %}
+                {% if orders %}
                     <div class="order-detail-container">
 
                         <div class="order-items">
                             <h3>آیتم‌های سفارش:</h3>
+                            {% for order in orders %}
+                                <ul class="order-items-list">
+                                    {% for item in order.items.all %}
 
-                            <ul class="order-items-list">
-                                {% for item in order.items.all %}
-
-
-                                    <li class="order-item">
-
-                                        <img src="{{ item.product.images.first.image.url }}"
-                                             alt="{{ item.product.name }}" class="order-item-image">
-                                        <div class="order-item-details">
-                                            <a href="{% url 'product_app:product_detail' item.product.id %}">{{ item.product.name }}</a>
-
-                                            <form class="update-form" method="post"
-                                                  action="{% url 'product_app:update_order_item' %}">
+                                        {#                                        {% if item.product.status == 'in_stock' %}#}
+                                        <li class="order-item">
+                                            <form action="{% url 'product_app:delete_order_item' %}" method="post">
                                                 {% csrf_token %}
-                                                <p><strong>تعداد: {{ item.quantity }}</strong>
-
+                                                <input type="hidden" name="order_item_id" value="{{ item.id }}">
+                                                <button class="delete-button" type="submit">
+                                                    حذف
+                                                </button>
                                             </form>
-                                            </p>
-                                            <span class="text-teal-400 text-lg">
+                                            <img src="{{ item.product.images.first.image.url }}"
+                                                 alt="{{ item.product.name }}" class="order-item-image">
+                                            <div class="order-item-details">
+                                                <a href="{% url 'product_app:product_detail' item.product.id %}">{{ item.product.name }}</a>
+
+                                                <form class="update-form" method="post"
+                                                      action="{% url 'product_app:update_order_item' %}">
+                                                    {% csrf_token %}
+                                                    <p><strong>تعداد:</strong>
+                                                        <input type="number" name="quantity" value="{{ item.quantity }}"
+                                                               min="1" required
+                                                               style="background-color: #1f2937; color: #ffffff; border-radius: 0.5rem; padding: 0.25rem 0.5rem; text-align: center; width: 60px;">
+                                                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                        <button type="submit">به‌روزرسانی</button>
+                                                </form>
+                                                </p>
+                                                <span class="text-teal-400 text-lg">
                     <span class="price">{{ item.product.price|floatformat:0|intcomma }}</span> تومان
                     {{ item.product.discount_percentage }}% تخفیف
                 </span>
-                                            <p><strong>قیمت کل آیتم:</strong> {{ item.get_total_price }} تومان
-                                            </p>
-                                        </div>
-                                    </li>
+                                                <p><strong>قیمت کل آیتم:</strong> {{ item.get_total_price }} تومان
+                                                </p>
+                                            </div>
+                                        </li>
+                                        {#                                        {% endif %}#}
 
-
-                                {% empty %}
-                                    <p>هیچ آیتمی برای این سفارش وجود ندارد.</p>
-                                {% endfor %}
-                            </ul>
-
+                                    {% empty %}
+                                        <p>هیچ آیتمی برای این سفارش وجود ندارد.</p>
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
                         </div>
                         <div class="order-details">
+                            {% for order in orders %}
+                                <div class="order">
 
-                            <div class="order">
+                                    <p><strong>وضعیت:</strong> {{ order.get_status_display }}</p>
 
-                                <div class="order-summary">
-                                    <!-- وضعیت سفارش -->
-                                    <p class="order-status"><strong>وضعیت:</strong> <span
-                                            class="status-label {{ status }}">{{ order.get_status_display }}</span></p>
-
-                                    <!-- قیمت اصلی کل محصولات -->
-                                    <p><strong>قیمت اصلی کل محصولات:</strong> <span
-                                            class="price">{{ order.original_price|intcomma }}</span> تومان</p>
-
-                                    <!-- کد تخفیف اعمال شده -->
-                                    {% if discount %}
-                                        <p><strong>کد تخفیف اعمال شده:</strong> <span
-                                                class="discount">%{{ discount }}</span> معادل <span
-                                                class="discount-price">{{ discount_price|intcomma }}</span> تومان</p>
-                                    {% endif %}
-
-                                    <!-- قیمت کل -->
-                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong> <span
-                                            class="total-price">{{ order.total_price|intcomma }}</span> تومان</p>
-                                </div>
-
-                                <div class="discount-code-container">
-
-                                </div>
-                                <div id="addresss">
-                                    <h2>آدرس‌ انتخابی شما</h2>
-                                    <ul class="address-list">
-                                        {% if address %}
-                                            <li class="{% if address.id == selected_address_id %}selected{% endif %}">
-                                                <p>
-                                                    <strong>نام:</strong> {{ address.first_name }} {{ address.last_name }}
-                                                </p>
-                                                <p><strong>ایمیل:</strong> {{ address.email }}</p>
-                                                <p><strong>تلفن:</strong> {{ address.phone }}</p>
-                                                <p><strong>آدرس:</strong> {{ address.address }}</p>
-                                                <p><strong>کد پستی:</strong> {{ address.postal_code }}</p>
-                                            </li>
-                                        {% else %}
-                                            <p>شما هیچ آدرسی اضافه نکرده‌اید.</p>
+                                    <p><strong>قیمت کل:</strong> {{ order.total_price }} تومان</p>
+                                    <div class="discount-code-container">
+                                        {% if messages %}
+                                            <div class="messages">
+                                                {% for message in messages %}
+                                                    <div class="message {{ message.tags }}">
+                                                        {{ message }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
                                         {% endif %}
-                                    </ul>
+                                        {% if order.discount_code %}
+                                            <div class="discount-section ">
+                                                <p><strong>کد تخفیف:</strong> {{ order.discount_code.name }}
+                                                    ({{ order.discount_code.discount }}% تخفیف)</p>
+                                                <form method="post" action="{% url 'product_app:remove_discount' %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit">حذف کد تخفیف</button>
+                                                </form>
+                                            </div>
+                                        {% else %}
+                                            <div class="discount-section">
+                                                <form method="post" action="{% url 'product_app:apply_discount' %}">
+                                                    {% csrf_token %}
+                                                    <label for="discount_code">کد تخفیف:</label>
+                                                    <input type="text" id="discount_code" name="discount_code"
+                                                           placeholder="کد تخفیف خود را وارد کنید">
+                                                    <button type="submit" class="delete-button">اعمال تخفیف</button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
 
+                                    </div>
+                                    <div id="addresss">
+                                        <h2>آدرس‌های شما</h2>
+                                        <ul class="address-list">
+                                            {% for address in user.addresses.all %}
+                                                <li class="{% if address.id == selected_address_id %}selected{% endif %}">
+                                                    <p>
+                                                        <strong>نام:</strong> {{ address.first_name }} {{ address.last_name }}
+                                                    </p>
+                                                    <p><strong>ایمیل:</strong> {{ address.email }}</p>
+                                                    <p><strong>تلفن:</strong> {{ address.phone }}</p>
+                                                    <p><strong>آدرس:</strong> {{ address.address }}</p>
+                                                    <p><strong>کد پستی:</strong> {{ address.postal_code }}</p>
+                                                    <form action="{% url 'product_app:select_address' address.id %}"
+                                                          method="post">
+                                                        {% csrf_token %}
+                                                        <button type="submit">انتخاب این آدرس</button>
+                                                    </form>
+                                                </li>
+                                            {% empty %}
+                                                <p>شما هیچ آدرسی اضافه نکرده‌اید.</p>
+                                            {% endfor %}
+                                        </ul>
+
+                                        <!-- فرم افزودن آدرس جدید -->
+                                        <div class="address-list">
+                                            <a href="{% url 'account_app:addAddress' %}">افزودن آدرس جدید</a>
+
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-
+                            {% endfor %}
                         </div>
 
                     </div>
