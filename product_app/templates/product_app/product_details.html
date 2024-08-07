@@ -281,7 +281,7 @@
                     {% endif %}
 
                     <p class="text-zinc-300 mt-2 mb-bmd-15">
-                        {{ product.description|slice:":30" }}{% if product.description|length > 30 %}...{% endif %}
+                        {{ product.description|slice:":300" }}{% if product.description|length > 300 %}...{% endif %}
                     </p>
 
                     <!-- بخش دکمه و تعداد -->
@@ -323,8 +323,7 @@
                     <div class="bg-zinc-800 p-4 rounded-lg">
                         <h5 class="text-xl font-semibold mb-2">توضیحات محصول</h5>
                         <p class="text-zinc-300">
-                            {{ product.description|slice:":200" }}{% if product.description|length > 200 %}
-                                ...{% endif %}</p>
+                            {{ product.description }}</p>
                     </div>
                 </div>
                 <div id="content-specs" class="tab-content p-4">
@@ -332,7 +331,7 @@
                         <ul class="list-disc pl-5 text-zinc-300">
                             <h5 class="text-xl font-semibold mb-2">ویژگی های محصول</h5>
                             {% for feature in product_features %}
-                                <li>- {{ feature }}</li>
+                                <li style="margin-right: 20px">{{ feature }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -376,7 +375,7 @@
                                             </button>
                                             <div id="reply-form-{{ review.id }}" class="reply-form mt-2 hidden">
                                                 <form method="post"
-                                                      action="{% url 'product_app:add_reply' review.id %}">
+                                                      action="{% url 'product_app:add_reply' review.id %}?active_tab=reviews">
                                                     {% csrf_token %}
                                                     <textarea name="comment" rows="3"
                                                               placeholder="پاسخ خود را بنویسید..."
@@ -473,8 +472,7 @@
 
         window.addEventListener('resize', updateBorder);
         window.addEventListener('load', updateBorder);
-    </script>
-    <script>
+
         function toggleReplyForm(reviewId) {
             const form = document.getElementById(`reply-form-${reviewId}`);
             form.classList.toggle('hidden');
@@ -640,9 +638,8 @@
                     },
                 },
                 detectRetina: true,
-            });
+            })
         });
-
     </script>
 {% endblock %}
 

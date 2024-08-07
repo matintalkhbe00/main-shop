@@ -4,29 +4,68 @@
 
 {% block style %}
     <style>
-    /* Base Grid Styles */
-.grid {
-    display: grid;
-}
+        /* Base Grid Styles */
+        .grid {
+            display: grid;
+        }
 
-/* 2 Columns */
-.grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
+        /* 2 Columns */
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
 
-/* Large Screens (lg) - 3 Columns */
-@media (min-width: 1024px) {
-    .lg\:grid-cols-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
+        /* Large Screens (lg) - 3 Columns */
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
 
-/* Extra Large Screens (xl) - 4 Columns */
-@media (min-width: 1280px) {
-    .xl\:grid-cols-4 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
+        /* Extra Large Screens (xl) - 4 Columns */
+        @media (min-width: 1280px) {
+            .xl\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+    </style>
+    <style>
+
+
+        /* استایل‌های پیجینیشن */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0 20px 0;
+        }
+
+        .pagination-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: #18181b; /* رنگ پس‌زمینه زینک 900 */
+            border-radius: 50%;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination-button:hover {
+            background-color: #4a5568; /* رنگ روشن‌تر برای هاور */
+        }
+
+        .pagination-icon {
+            width: 16px;
+            height: 16px;
+            color: #ffffff; /* رنگ آیکون */
+        }
+
+        .pagination-current {
+            color: white;
+        }
+
 
     </style>
 {% endblock %}
@@ -41,26 +80,30 @@
                         {% if product.images.exists %}
                             <img src="{{ product.images.first.image.url }}" class="md:w-auto mx-auto" loading="lazy"
                                  alt="{{ product.images.first.alt_text }}">
+                            {% else %}
+                            <img src="{% static 'img/products/productDefault.png' %}" class="md:w-auto mx-auto" loading="lazy" alt="product img not loaded">
                         {% endif %}
                         {% if product.discount_percentage %}
                             {% if product.status == "in_stock" %}
 
-                            <span class="absolute block top-1 right-1 bg-orange-300 h-5 md:h-[30px] rounded-full px-2.5 md:px-3 py-1 font-DanaDemiBold text-xs md:text-base text-white dark:text-zinc-700">
+                                <span class="absolute block top-1 right-1 bg-orange-300 h-5 md:h-[30px] rounded-full px-2.5 md:px-3 py-1 font-DanaDemiBold text-xs md:text-base text-white dark:text-zinc-700">
                                 {{ product.discount_percentage }}%
                             </span>
                             {% endif %}
                         {% endif %}
                     </div>
                     <!-- Product title -->
-                    <a href="{% url 'product_app:product_detail' product.id %}" class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
+                    <a href="{% url 'product_app:product_detail' product.id %}"
+                       class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
                         {{ product.name }}
                     </a>
                     <!-- Price -->
                     <div class="flex gap-x-2 md:gap-2.5 pb-2.5 md:pb-4 items-center">
                         {% if product.status == 'in_stock' %}
                             {% if product.discount_percentage %}
-                                 <div class="flex items-center text-gray-400 line-through decoration-red-400">
-                                    <span class="text-sm md:text-xl">{{ product.price|intcomma }}</span>  <!-- استفاده از فیلتر intcomma -->
+                                <div class="flex items-center text-gray-400 line-through decoration-red-400">
+                                    <span class="text-sm md:text-xl">{{ product.price|intcomma }}</span>
+                                    <!-- استفاده از فیلتر intcomma -->
                                     <span class="hidden md:inline-block text-sm tracking-tighter">تومان</span>
                                 </div>
                                 <div class="flex items-center text-teal-600 dark:text-emerald-500">
@@ -86,14 +129,12 @@
                     </div>
                     <!-- Shopping and comparison SVG -->
                     <div class="flex justify-between items-center">
-                        <div class="flex gap-px md:gap-1.5">
+                        <a href="{% url 'product_app:product_detail' product.id %}" class="flex gap-px md:gap-1.5">
                             <svg class="w-7 h-7 p-1 md:w-9 md:h-9 md:p-2 rounded-full text-gray-400 bg-gray-100 stroke-[1.5px] dark:bg-zinc-800 hover:bg-teal-600 dark:hover:bg-emerald-500 hover:text-white cursor-pointer transition-all">
                                 <use href="#shopping-cart"></use>
                             </svg>
-                            <svg class="w-7 h-7 p-1 md:w-9 md:h-9 md:p-2 text-gray-400 hover:text-teal-600 dark:hover:text-emerald-500 transition-all">
-                                <use href="#arrows-right-left"></use>
-                            </svg>
-                        </div>
+
+                        </a>
                         <!-- Rating -->
                         <div class="flex items-center">
                             <div class="flex items-center">
@@ -120,6 +161,30 @@
             {% endfor %}
         </div>
     </section>
+
+    <!-- پیجینیشن -->
+    <div class="pagination">
+        {% if page_obj.has_next %}
+
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-button pagination-next" >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pagination-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        {% endif %}
+
+        <span class="pagination-current">
+            صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-button pagination-prev">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pagination-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </a>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block script %}

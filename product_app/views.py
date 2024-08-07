@@ -30,8 +30,9 @@ def add_reply(request, review_id):
             reply.author = request.user.fullname if request.user.fullname else request.user.phone
             reply.parent = review
             reply.save()
-            return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id]))
-    return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id]))
+            return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id])+'?active_tab=reviews')
+        return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id]))
+
 
 
 class ProductDetailView(View):
@@ -76,6 +77,7 @@ class ProductListView(ListView):
     context_object_name = 'products'
     paginate_by = 12
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         products_with_ratings = {product.pk: product.calculate_average_rating() for product in Product.objects.all()}
@@ -84,51 +86,6 @@ class ProductListView(ListView):
 
 
 # ////////////////////////////////////////////////////////////////
-
-
-# class ProductAddOrderView(View):
-#     @transaction.atomic
-#     def post(self, request, pk):
-#         product = get_object_or_404(Product, pk=pk)
-#         quantity = int(request.POST.get('quantity', 1))
-#         discount_code = request.POST.get('discount_code', '').strip()
-#
-#         # دریافت یا ایجاد سفارش
-#         try:
-#             order = Order.objects.get(user=request.user, status="notRegistered")
-#         except Order.DoesNotExist:
-#             order = Order.objects.create(user=request.user, status="notRegistered")
-#
-#         # بررسی وجود آیتم محصول در سفارش
-#         try:
-#             order_item = OrderItem.objects.get(order=order, product=product)
-#             # اگر آیتم موجود است، به‌روزرسانی تعداد و قیمت آن
-#             order_item.quantity += quantity
-#             order_item.price = product.get_final_price()
-#             order_item.save()
-#         except OrderItem.DoesNotExist:
-#             # اگر آیتم وجود ندارد، آن را ایجاد می‌کنیم
-#             OrderItem.objects.create(
-#                 order=order,
-#                 product=product,
-#                 quantity=quantity,
-#                 price=product.get_final_price()
-#             )
-#
-#         # به‌روزرسانی قیمت کل سفارش
-#         order.update_total_price()
-#
-#         # اعمال کد تخفیف
-#         if discount_code:
-#             try:
-#                 discount = DiscountCode.objects.get(name=discount_code)
-#                 if discount.is_valid():
-#                     order.discount_code = discount
-#                     order.save()
-#             except DiscountCode.DoesNotExist:
-#                 pass
-#
-#         return redirect("product_app:order_detail")
 
 
 class ProductAddOrderView(LoginRequiredMixin, View):
@@ -161,11 +118,11 @@ class ProductAddOrderView(LoginRequiredMixin, View):
         # به‌روزرسانی قیمت کل سفارش
         order.update_total_price()
 
-        return redirect("product_app:order_detail")
+        return redirect(reverse("product_app:order_detail") + "?notification=product_added")
 
 
 class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
-    template_name = 'product_app/order_details.html'
+    template_name = 'product_app/order_notRegistered.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -173,12 +130,71 @@ class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
         addresses = Address.objects.filter(user=user)
         selected_address_id = self.request.session.get('selected_address_id')
         order = Order.objects.filter(user=user, status="notRegistered")
+
+        notification_type = self.request.GET.get('notification')
+
+        if notification_type == 'product_added':
+            show_notification = True
+            notification_message = 'محصول با موفقیت به سبد خرید اضافه شد!'
+            notification_status = 'success'
+        elif notification_type == 'discount_applied':
+            show_notification = True
+            notification_message = 'تخفیف به سفارش شما اعمال شد!'
+            notification_status = 'success'
+        elif notification_type == 'discount_removed':
+            show_notification = True
+            notification_message = 'کد تخفیف با موفقیت حذف شد!'
+            notification_status = 'success'
+        elif notification_type == 'order_item_updated':
+            show_notification = True
+            notification_message = 'آیتم سفارش با موفقیت به‌روزرسانی شد!'
+            notification_status = 'success'
+        elif notification_type == 'order_item_deleted':
+            show_notification = True
+            notification_message = 'آیتم سفارش با موفقیت حذف شد!'
+            notification_status = 'success'
+        elif notification_type == 'address_selected':
+            show_notification = True
+            notification_message = 'آدرس با موفقیت انتخاب شد!'
+            notification_status = 'success'
+        elif notification_type == 'discount_code_missing':
+            show_notification = True
+            notification_message = 'لطفاً کد تخفیف را وارد کنید.'
+            notification_status = 'warning'
+        elif notification_type == 'no_order_found':
+            show_notification = True
+            notification_message = 'سفارشی برای شما پیدا نشد.'
+            notification_status = 'warning'
+        elif notification_type == 'invalid_discount_code':
+            show_notification = True
+            notification_message = 'کد تخفیف معتبر نیست.'
+            notification_status = 'error'
+        elif notification_type == 'update_failed':
+            show_notification = True
+            notification_message = 'به‌روزرسانی ناموفق بود.'
+            notification_status = 'error'
+        elif notification_type == 'delete_failed':
+            show_notification = True
+            notification_message = 'حذف ناموفق بود.'
+            notification_status = 'error'
+        elif notification_type == 'order_address':
+            show_notification = True
+            notification_message = 'لطفا آدرسی انتخاب یا اضافه کنید'
+            notification_status = 'warning'
+        else:
+            show_notification = False
+            notification_message = ''
+            notification_status = 'none'
+
         context.update({
             'user': user,
             'addresses': addresses,
             'selected_address_id': selected_address_id,
             'form': AddressForm(),
             'orders': order,
+            'show_notification': show_notification,
+            'notification_message': notification_message,
+            'notification_status' : notification_status
         })
 
         return context
@@ -187,9 +203,13 @@ class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
 class ConfirmOrderView(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.get(user=request.user, status="notRegistered")
+        if not order.address:
+            return redirect(reverse('product_app:order_detail')+"?notification=order_address")
+
+
         order.status = "pending"
         order.save()
-        return redirect("account_app:profile")
+        return redirect(reverse("account_app:profile")+'?notification=confirmOrder')
 
 
 class OrderDetailsView(LoginRequiredMixin, TemplateView):
@@ -200,15 +220,16 @@ class OrderDetailsView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         pk = self.kwargs.get('pk')
 
-        order = get_object_or_404(Order , user=user, id = pk)
+        order = get_object_or_404(Order, user=user, id=pk)
+        discount_price = order.original_price - order.total_price
+
         context.update({
             'user': user,
             'order': order,
             'address': order.address,
             'total_price': order.total_price,
-            'original_price' : order.original_price,
-            'discount' : order.discount_code.discount,
-            'discount_price' : order.original_price - order.total_price,
+            'original_price': order.original_price,
+            'discount_price': order.original_price - order.total_price,
             'created_at': order.created_at,
             'status': order.status,
 
@@ -224,36 +245,33 @@ class ApplyDiscountView(View):
 
         if not discount_code:
             messages.error(request, 'لطفاً کد تخفیف را وارد کنید.')
-            return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=discount_code_missing")
 
         order = Order.objects.filter(user=request.user, status='notRegistered').first()
         if not order:
             messages.error(request, 'سفارشی برای شما پیدا نشد.')
-            return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=no_order_found")
 
-        # جستجو کد تخفیف بدون استفاده از get_object_or_404
         try:
             discount = DiscountCode.objects.get(name=discount_code)
         except DiscountCode.DoesNotExist:
             messages.error(request, 'کد تخفیف معتبر نیست.')
-            return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=invalid_discount_code")
 
         if not discount.is_valid():
             messages.error(request, 'کد تخفیف معتبر نیست.')
-            return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=invalid_discount_code")
 
-        # اعمال تخفیف به سفارش
         discount_amount = (order.original_price * discount.discount) / 100
         order.total_price = order.original_price - discount_amount
         order.discount_code = discount
         order.save()
 
-        # کاهش تعداد کد تخفیف
         discount.quantity -= 1
         discount.save()
 
         messages.success(request, f'تخفیف {discount.discount}% به سفارش شما اعمال شد.')
-        return redirect(reverse('product_app:order_detail'))
+        return redirect(reverse('product_app:order_detail') + "?notification=discount_applied")
 
 
 class RemoveDiscountView(View):
@@ -262,26 +280,22 @@ class RemoveDiscountView(View):
 
         if not order:
             messages.error(request, "سفارشی برای حذف تخفیف یافت نشد.")
-            return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=no_order_found")
 
         if order.discount_code:
-            # ذخیره کد تخفیف قبل از حذف
             discount = order.discount_code
-
-            # حذف کد تخفیف از سفارش
             order.discount_code = None
             order.total_price = order.original_price
             order.save()
 
-            # افزایش تعداد کد تخفیف
             discount.quantity += 1
             discount.save()
 
             messages.success(request, "کد تخفیف با موفقیت حذف شد.")
+            return redirect(reverse('product_app:order_detail') + "?notification=discount_removed")
         else:
             messages.error(request, "هیچ کد تخفیفی برای حذف وجود ندارد.")
-
-        return redirect(reverse('product_app:order_detail'))
+            return redirect(reverse('product_app:order_detail') + "?notification=no_discount_to_remove")
 
 
 class UpdateOrderItemView(View):
@@ -293,7 +307,9 @@ class UpdateOrderItemView(View):
             quantity = form.cleaned_data['quantity']
             order_item.quantity = quantity
             order_item.save()
-            return redirect('product_app:order_detail')  # Update the URL name accordingly
+            return redirect(reverse('product_app:order_detail') + "?notification=order_item_updated")
+        else:
+            return redirect(reverse('product_app:order_detail') + "?notification=update_failed")
 
 
 class DeleteOrderItemView(View):
@@ -301,21 +317,15 @@ class DeleteOrderItemView(View):
         order_item_id = request.POST.get('order_item_id')
 
         if order_item_id:
-            # تلاش برای دریافت OrderItem با شناسه داده شده
             order_item = get_object_or_404(OrderItem, id=order_item_id)
             order = order_item.order
 
-            # حذف آیتم از سفارش
             order_item.delete()
-
-            # بروزرسانی قیمت کل سفارش
             order.update_total_price()
 
-            # هدایت به صفحه جزئیات سفارش
-            return redirect('product_app:order_detail')
+            return redirect(reverse('product_app:order_detail') + "?notification=order_item_deleted")
         else:
-            # مدیریت خطا در صورت عدم ارسال شناسه آیتم
-            return redirect('product_app:product_list')  # یا صفحه دیگری برای مدیریت خطا
+            return redirect(reverse('product_app:order_detail') + "?notification=delete_failed")
 
 
 class AddAddressView(LoginRequiredMixin, FormView):
@@ -334,11 +344,9 @@ def select_address(request, address_id):
     order = Order.objects.filter(user=request.user, status='notRegistered').first()
 
     if order:
-        # تعیین آدرس برای سفارش
         order.address = address
         order.save()
 
-    # ذخیره آدرس انتخاب شده در سشن
     request.session['selected_address_id'] = address.id
 
-    return redirect('product_app:order_detail')
+    return redirect(reverse('product_app:order_detail') + "?notification=address_selected")

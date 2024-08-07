@@ -12,14 +12,15 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        order = Order.objects.filter(user=user, status="notRegistered").first()
-        count = order.items.count() if order else 0
-        context.update({
-            'user': user,
-            'order': order,
-            'count': count
-        })
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            order = Order.objects.filter(user=user, status="notRegistered").first()
+            count = order.items.count() if order else 0
+            context.update({
+                'user': user,
+                'order': order,
+                'count': count
+            })
 
 
 

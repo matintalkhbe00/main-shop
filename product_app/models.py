@@ -139,17 +139,6 @@ class Order(models.Model):
     def __str__(self):
         return f'Order {self.id} by {self.user.fullname}'
 
-    # def save(self, *args, **kwargs):
-    #     # محاسبه قیمت کل بر اساس آیتم‌ها و تخفیف
-    #     if self.pk:
-    #         self.original_price = sum(item.get_total_price() for item in self.items.all())
-    #         self.total_price = self.get_discounted_total_price()
-    #         super().save(*args, **kwargs)
-    #
-    # def update_total_price(self):
-    #     total = sum(item.get_total_price() for item in self.items.all())
-    #     self.total_price = total
-    #     self.save()
     def save(self, *args, **kwargs):
         if self.pk:
             # فقط هنگام به‌روزرسانی قیمت‌ها به‌روز می‌شود
@@ -205,3 +194,6 @@ class OrderItem(models.Model):
 def update_order_total_price(sender, instance, **kwargs):
     order = instance.order
     order.update_total_price()
+
+
+

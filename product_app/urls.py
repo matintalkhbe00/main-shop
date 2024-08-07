@@ -22,7 +22,7 @@ urlpatterns = [
 
     # ////////////////////////////////////////////////////////////////////////
     path('addproduct/<int:pk>', views.ProductAddOrderView.as_view(), name='product_add'),
-    path('ordernotregistered', views.OrderNotRegisteredView.as_view(), name='order_detail'),
+    path('ordernotregistered/', views.OrderNotRegisteredView.as_view(), name='order_detail'),
     path('orderdetail/<int:pk>' , views.OrderDetailsView.as_view(), name='order_id_search'),
     path('orderconfirm' , views.ConfirmOrderView.as_view(), name='order_confirm'),
     path('apply_discount/', views.ApplyDiscountView.as_view(), name='apply_discount'),

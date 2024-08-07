@@ -606,7 +606,7 @@
                     <span class="price">{{ item.product.price|floatformat:0|intcomma }}</span> تومان
                     {{ item.product.discount_percentage }}% تخفیف
                 </span>
-                                            <p><strong>قیمت کل آیتم:</strong> {{ item.get_total_price }} تومان
+                                            <p><strong>قیمت کل آیتم:</strong> {{ item.product.get_final_price }} تومان
                                             </p>
                                         </div>
                                     </li>
@@ -626,21 +626,25 @@
                                     <!-- وضعیت سفارش -->
                                     <p class="order-status"><strong>وضعیت:</strong> <span
                                             class="status-label {{ status }}">{{ order.get_status_display }}</span></p>
+                                    <p><strong>تاریخ :</strong>{{ created_at|date:"j E" }}</p>
+
+                                                                        <!-- کد تخفیف اعمال شده -->
+                                    {% if order.discount_code.discount %}
+                                        <p><strong>کد تخفیف اعمال شده:</strong> <span
+                                                class="discount">%{{ order.discount_code.discount }}</span> معادل <span
+                                                class="discount-price">{{ discount_price|intcomma }}</span> تومان</p>
+                                                                            <!-- قیمت کل -->
+                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong> <span
+                                            class="total-price">{{ order.total_price|intcomma }}</span> تومان</p>
+                                    {% endif %}
 
                                     <!-- قیمت اصلی کل محصولات -->
                                     <p><strong>قیمت اصلی کل محصولات:</strong> <span
                                             class="price">{{ order.original_price|intcomma }}</span> تومان</p>
 
-                                    <!-- کد تخفیف اعمال شده -->
-                                    {% if discount %}
-                                        <p><strong>کد تخفیف اعمال شده:</strong> <span
-                                                class="discount">%{{ discount }}</span> معادل <span
-                                                class="discount-price">{{ discount_price|intcomma }}</span> تومان</p>
-                                    {% endif %}
 
-                                    <!-- قیمت کل -->
-                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong> <span
-                                            class="total-price">{{ order.total_price|intcomma }}</span> تومان</p>
+
+
                                 </div>
 
                                 <div class="discount-code-container">

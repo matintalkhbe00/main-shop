@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from product_app.forms import AddressForm
+from product_app.models import Order
 from .forms import CustomLoginForm
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -47,13 +49,28 @@ class ProductListView(TemplateView):
 from django.views.generic import TemplateView
 
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin,TemplateView):
     template_name = "account_app/profile.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
+        order = Order.objects.all().order_by('-id')
+        notification_type = self.request.GET.get('notification')
+        if notification_type == 'confirmOrder':
+            show_notification = True
+            notification_message = 'پرداخت با موفقیت انجام شد!'
+        else:
+            show_notification = False
+            notification_message = ''
+        context.update({
+            'user': user,
+            'orders': order,
+            'show_notification': show_notification,
+            'notification_message': notification_message
+        })
+
         return context
 
     def get(self, request, *args, **kwargs):
@@ -61,6 +78,8 @@ class ProfileView(TemplateView):
             # اگر کاربر وارد نشده است، او را به صفحه ثبت‌نام هدایت کن
             return redirect('account_app:login')  # فرض کنید نام URL صفحه ثبت‌نام 'signup' است
         return super().get(request, *args, **kwargs)
+
+
 
 
 @login_required
@@ -76,3 +95,5 @@ def add_address(request):
         form = AddressForm()
 
     return render(request, 'account_app/add_address.html', {'form': form})
+
+

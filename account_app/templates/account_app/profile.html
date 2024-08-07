@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% load static %}
 {% block style %}
     <style>
@@ -9,6 +10,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -16,6 +18,7 @@
             margin: 0 auto;
             padding: 1rem;
         }
+
         .sidebar {
             background-color: #4b5563; /* رنگ پس‌زمینه برای تب‌ها */
             border-radius: 8px;
@@ -24,6 +27,7 @@
             display: flex;
             flex-direction: column;
         }
+
         .sidebar button {
             background: none;
             border: none;
@@ -36,15 +40,18 @@
             transition: background 0.3s;
             margin-bottom: 0.5rem;
         }
+
         .sidebar button.active {
             background-color: #1f2937; /* رنگ فعال برای تب‌ها */
         }
+
         .profile-details {
             background-color: #2d3748; /* رنگ پس‌زمینه برای جزئیات */
             border-radius: 8px;
             padding: 1rem;
             color: #e5e7eb;
         }
+
         .profile-header {
             display: flex;
             flex-direction: column;
@@ -53,6 +60,7 @@
             padding-bottom: 1rem;
             margin-bottom: 2rem;
         }
+
         .profile-header img {
             border-radius: 50%;
             width: 100px;
@@ -60,23 +68,29 @@
             object-fit: cover;
             margin-bottom: 1rem;
         }
+
         .profile-header h1 {
             margin: 0;
             font-size: 1.5rem;
             text-align: center;
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
+
         .address, .product {
             margin-bottom: 1rem;
         }
+
         .address p, .product p {
             margin: 0.5rem 0;
         }
+
         .product {
             display: flex;
             flex-direction: column;
@@ -85,6 +99,7 @@
             background-color: #4b5563;
             border-radius: 8px;
         }
+
         .product img {
             width: 80px;
             height: 80px;
@@ -92,9 +107,11 @@
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+
         .product-info {
             text-align: center;
         }
+
         .product-info p {
             margin: 0.5rem 0;
         }
@@ -104,20 +121,25 @@
             .container {
                 flex-direction: column;
             }
+
             .sidebar {
                 width: 100%;
                 margin-bottom: 0;
             }
+
             .profile-details {
                 padding: 0.5rem;
             }
+
             .profile-header img {
                 width: 80px;
                 height: 80px;
             }
+
             .profile-header h1 {
                 font-size: 1.2rem;
             }
+
             .sidebar button {
                 padding: 0.8rem;
             }
@@ -128,38 +150,175 @@
             .profile-header h1 {
                 font-size: 1rem;
             }
+
             .profile-header img {
                 width: 60px;
                 height: 60px;
             }
+
             .product img {
                 width: 60px;
                 height: 60px;
             }
+
             .sidebar button {
                 padding: 0.5rem;
             }
         }
     </style>
+    <style>
+        .address-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+    </style>
+    <style>
+
+        .status-label.notRegistered {
+            color: #f44336; /* Red for not registered */
+        }
+
+        .status-label.pending {
+            color: #ff9800; /* Orange for pending */
+        }
+
+        .status-label.shipped {
+            color: #2196f3; /* Blue for shipped */
+        }
+
+        .status-label.delivered {
+            color: #4caf50; /* Green for delivered */
+        }
+
+        .status-label.cancelled {
+            color: #000000; /* Gray for cancelled */
+        }
+
+        .price, .discount, .discount-price, .total-price {
+        {#font-weight: bold;#}
+        }
+
+        .total-price {
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .discount, .price {
+            color: #2dd4bf; /* Dark red for discount */
+        }
+
+        .discount-price {
+            color: #2dd4bf; /* Same as discount for consistency */
+        }
+
+        .product-images {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .product-image-link {
+            display: inline-block;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .order-summary {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .order-details-address {
+            border: 1px solid #ddd;
+
+            padding: 2px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+
+
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+    </style>
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: -300px; /* Start off the screen */
+            background-color: #4caf50; /* Green background for success */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: right 0.5s ease-in-out;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            right: 20px; /* Position it in view */
+        }
+
+        .notification p {
+            margin: 0;
+        }
+
+    </style>
+    <style>
+    .scrollable-section {
+    width: auto;
+    height: 800px;
+    overflow-y: scroll;
+
+    padding: 10px;}
+    </style>
 {% endblock %}
 
 {% block main %}
-<main class="md:py-[150px] font-DanaRegular">
-    <div class="container">
-        <!-- نوار کناری تب‌ها -->
-        <div class="sidebar">
-            <button class="tab-button active" data-target="info">اطلاعات کلی</button>
-            <button class="tab-button" data-target="addresses">آدرس‌ها</button>
-            <button class="tab-button" data-target="products">محصولات خریداری شده</button>
-        </div>
+    <main class="md:py-[150px] font-DanaRegular">
+        <div class="container">
+            <!-- نوار کناری تب‌ها -->
+            <div class="sidebar">
+                <button class="tab-button active" data-target="info">اطلاعات کلی</button>
+                <button class="tab-button" data-target="addresses">آدرس‌ها</button>
+                <button class="tab-button" data-target="products">محصولات خریداری شده</button>
+            </div>
 
-        <!-- جزئیات پروفایل -->
-        <div class="profile-details">
-            <!-- هدر پروفایل -->
-            <div class="profile-header">
-                <img src="{{ user.profile_picture.url }}" alt="عکس پروفایل کاربر">
-                <div>
-                    <h1>{{ user.fullname }}</h1>
+            <!-- جزئیات پروفایل -->
+            <div class="profile-details">
+                <!-- هدر پروفایل -->
+                <div class="profile-header">
+                    <img src="{{ user.profile_picture.url }}" alt="عکس پروفایل کاربر">
+                    <div>
+                        <h1>{{ user.fullname }}</h1>
+                        <p>شماره تلفن: {{ user.phone }}</p>
+                        <p>ایمیل: {{ user.email }}</p>
+                        <p>وضعیت:
+                            {% if user.is_active %}
+                                فعال
+                            {% else %}
+                                غیرفعال
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- محتوای تب‌ها -->
+                <div class="tab-content info active">
+                    <h2>اطلاعات کلی</h2>
+                    <p>نام کامل: {{ user.fullname }}</p>
                     <p>شماره تلفن: {{ user.phone }}</p>
                     <p>ایمیل: {{ user.email }}</p>
                     <p>وضعیت:
@@ -170,48 +329,94 @@
                         {% endif %}
                     </p>
                 </div>
-            </div>
 
-            <!-- محتوای تب‌ها -->
-            <div class="tab-content info active">
-                <h2>اطلاعات کلی</h2>
-                <p>نام کامل: {{ user.fullname }}</p>
-                <p>شماره تلفن: {{ user.phone }}</p>
-                <p>ایمیل: {{ user.email }}</p>
-                <p>وضعیت:
-                    {% if user.is_active %}
-                        فعال
+                <div class="tab-content addresses">
+                    <h2>آدرس‌ها</h2>
+                    {% if user.addresses.exists %}
+                        {% for address in user.addresses.all %}
+                            <div class="address address-item">
+                                <p>نام: {{ address.first_name }}</p>
+                                <p>نام خانوادگی: {{ address.last_name }}</p>
+                                <p>ایمیل: {{ address.email }}</p>
+                                <p>شماره تلفن: {{ address.phone }}</p>
+                                <p>آدرس: {{ address.address }}</p>
+                                <p>کد پستی: {{ address.postal_code }}</p>
+                            </div>
+                        {% endfor %}
                     {% else %}
-                        غیرفعال
+                        <p>آدرس‌ها پیدا نشدند.</p>
                     {% endif %}
-                </p>
-            </div>
-
-            <div class="tab-content addresses">
-                <h2>آدرس‌ها</h2>
-                {% if user.addresses.exists %}
-                {% for address in user.addresses.all %}
-                <div class="address">
-                    <p>نام: {{ address.first_name }}</p>
-                    <p>نام خانوادگی: {{ address.last_name }}</p>
-                    <p>ایمیل: {{ address.email }}</p>
-                    <p>شماره تلفن: {{ address.phone }}</p>
-                    <p>آدرس: {{ address.address }}</p>
-                    <p>کد پستی: {{ address.postal_code }}</p>
                 </div>
-                {% endfor %}
-                {% else %}
-                <p>آدرس‌ها پیدا نشدند.</p>
-                {% endif %}
-            </div>
 
-            <div class="tab-content products">
-                <h2>محصولات خریداری شده</h2>
-                <!-- لیست محصولات را به همین روش اضافه کنید -->
+                <div class="tab-content products ">
+                <div class="scrollable-section">
+                    {% for order in orders %}
+                        <div class="order-summary">
+
+                            <a href="{% url 'product_app:order_id_search' order.id %}"
+                               class="order-status order-details-address"><strong>جزئیات سفارش</strong>
+                            </a>
+                            <div class="details">
+                                <!-- وضعیت سفارش -->
+                                <p class="order-status"><strong>وضعیت:</strong>
+                                    <span class="status-label {{ order.status }}">{{ order.get_status_display }}</span>
+                                </p>
+
+                                <!-- تاریخ سفارش -->
+                                <p><strong>تاریخ :</strong> {{ order.created_at|date:"j E" }}</p>
+                                {% if order.original_price %}
+                                    <!-- قیمت اصلی کل محصولات -->
+                                    <p><strong>قیمت اصلی کل محصولات:</strong>
+                                        <span class="price">{{ order.original_price|intcomma }}</span> تومان
+                                    </p>
+                                {% endif %}
+
+
+                                <!-- کد تخفیف اعمال شده -->
+                                {% if order.discount_code.discount %}
+                                    <p><strong>کد تخفیف اعمال شده:</strong>
+                                        <span class="discount">%{{ order.discount_code.discount }}</span>
+                                    </p>
+                                {% endif %}
+
+                                {% if order.total_price %}
+
+                                    <!-- قیمت کل -->
+                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong>
+                                        <span class="total-price">{{ order.total_price|intcomma }}</span> تومان
+                                    </p>
+                                {% endif %}
+
+
+                                <!-- عکس‌های محصولات -->
+                                <div class="product-images">
+                                    {% for item in order.items.all %}
+                                        {% if item.product.images.all %}
+                                            <a href="{% url 'product_app:product_detail' item.product.id %}"
+                                               class="product-image-link">
+                                                <img src="{{ item.product.images.first.image.url }}"
+                                                     alt="{{ item.product.name }}" class="product-image">
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+
+                </div>
             </div>
         </div>
-    </div>
-</main>
+        <!-- Notification -->
+        {% if show_notification %}
+            <div id="notification" class="notification">
+                <p id="notification-message">{{ notification_message }}</p>
+            </div>
+        {% endif %}
+    </main>
 {% endblock %}
 
 {% block script %}
@@ -234,5 +439,42 @@
                 });
             });
         });
+    </script>
+    <script>
+     function activateTab(tabName) {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.getAttribute('data-target') === tabName) {
+                    button.classList.add('active');
+                }
+            });
+
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.classList.contains(tabName)) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var notification = document.getElementById('notification');
+
+            if (notification) {
+
+                // Show the notification
+                notification.classList.add('show');
+                activateTab('products');
+
+                // Hide the notification after 5 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                }, 5000); // Change duration as needed
+            }
+        });
+
     </script>
 {% endblock %}
