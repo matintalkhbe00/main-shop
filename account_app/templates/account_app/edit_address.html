@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block style %}
+	 <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: #f44336;
+            margin-top: 10px;
+        }
+        .hint-address{
+            text-align: center;
+            justify-items: center;
+                padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+	<body>
+    <main class="py-[150px]">
+        <div class="container">
+        <div class="hint-address">
+            <p><strong>لطفا آدرس خود را تغییر کنید</strong></p>
+        </div>
+        <form method="post" >
+            {% csrf_token %}
+                        {% if form.errors %}
+                <div class="error-message">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="first_name">نام</label>
+                {{ form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="last_name">نام خانوادگی</label>
+                {{ form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="email">ایمیل</label>
+                {{ form.email }}
+            </div>
+            <div class="form-group">
+                <label for="phone">تلفن</label>
+                {{ form.phone }}
+            </div>
+            <div class="form-group">
+                <label for="address">آدرس</label>
+                {{ form.address }}
+            </div>
+            <div class="form-group">
+                <label for="postal_code">کد پستی</label>
+                {{ form.postal_code }}
+            </div>
+            <div class="form-group">
+                <button type="submit">ثبت آدرس</button>
+            </div>
+
+        </form>
+    </div>
+    </main>
+</body>
+{% endblock %}

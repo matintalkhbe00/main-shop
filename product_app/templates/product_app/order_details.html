@@ -526,42 +526,42 @@
     </style>
     <style>
 
-.status-label.notRegistered {
-    color: #f44336; /* Red for not registered */
-}
+        .status-label.notRegistered {
+            color: #f44336; /* Red for not registered */
+        }
 
-.status-label.pending {
-    color: #ff9800; /* Orange for pending */
-}
+        .status-label.pending {
+            color: #ff9800; /* Orange for pending */
+        }
 
-.status-label.shipped {
-    color: #2196f3; /* Blue for shipped */
-}
+        .status-label.shipped {
+            color: #2196f3; /* Blue for shipped */
+        }
 
-.status-label.delivered {
-    color: #4caf50; /* Green for delivered */
-}
+        .status-label.delivered {
+            color: #4caf50; /* Green for delivered */
+        }
 
-.status-label.cancelled {
-    color: #000000; /* Gray for cancelled */
-}
+        .status-label.cancelled {
+            color: #000000; /* Gray for cancelled */
+        }
 
-.price, .discount, .discount-price, .total-price {
-    {#font-weight: bold;#}
-}
+        .price, .discount, .discount-price, .total-price {
+        {#font-weight: bold;#}
+        }
 
- .total-price {
-    color: #38bdf8;
-     font-weight: bold;
-}
+        .total-price {
+            color: #38bdf8;
+            font-weight: bold;
+        }
 
-.discount , .price{
-    color: #2dd4bf; /* Dark red for discount */
-}
+        .discount, .price {
+            color: #2dd4bf; /* Dark red for discount */
+        }
 
-.discount-price {
-    color: #2dd4bf; /* Same as discount for consistency */
-}
+        .discount-price {
+            color: #2dd4bf; /* Same as discount for consistency */
+        }
 
     </style>
 {% endblock %}
@@ -595,19 +595,22 @@
                                         <div class="order-item-details">
                                             <a href="{% url 'product_app:product_detail' item.product.id %}">{{ item.product.name }}</a>
 
-                                            <form class="update-form" method="post"
-                                                  action="{% url 'product_app:update_order_item' %}">
-                                                {% csrf_token %}
+
                                                 <p><strong>تعداد: {{ item.quantity }}</strong>
 
-                                            </form>
+
                                             </p>
-                                            <span class="text-teal-400 text-lg">
+                                                {% if item.product.discount_percentage %}
+                                                    <span class="text-teal-400 text-lg">
                     <span class="price">{{ item.product.price|floatformat:0|intcomma }}</span> تومان
                     {{ item.product.discount_percentage }}% تخفیف
+                                                                            => {{ item.product.get_final_price }} تومان
                 </span>
-                                            <p><strong>قیمت کل آیتم:</strong> {{ item.product.get_final_price }} تومان
-                                            </p>
+                                                {% endif %}
+                                                <p><strong>قیمت هر آیتم:</strong> {{ item.product.get_final_price }}
+                                                    تومان
+                                                <p><strong>قیمت کل آیتم:</strong> {{ item.get_total_price }} تومان
+                                                </p>
                                         </div>
                                     </li>
 
@@ -628,21 +631,19 @@
                                             class="status-label {{ status }}">{{ order.get_status_display }}</span></p>
                                     <p><strong>تاریخ :</strong>{{ created_at|date:"j E" }}</p>
 
-                                                                        <!-- کد تخفیف اعمال شده -->
+                                    <!-- کد تخفیف اعمال شده -->
                                     {% if order.discount_code.discount %}
                                         <p><strong>کد تخفیف اعمال شده:</strong> <span
                                                 class="discount">%{{ order.discount_code.discount }}</span> معادل <span
                                                 class="discount-price">{{ discount_price|intcomma }}</span> تومان</p>
-                                                                            <!-- قیمت کل -->
-                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong> <span
-                                            class="total-price">{{ order.total_price|intcomma }}</span> تومان</p>
+                                        <!-- قیمت کل -->
+                                        <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong> <span
+                                                class="total-price">{{ order.total_price|intcomma }}</span> تومان</p>
                                     {% endif %}
 
                                     <!-- قیمت اصلی کل محصولات -->
                                     <p><strong>قیمت اصلی کل محصولات:</strong> <span
                                             class="price">{{ order.original_price|intcomma }}</span> تومان</p>
-
-
 
 
                                 </div>

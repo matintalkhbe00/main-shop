@@ -3,6 +3,7 @@
 {% load humanize %}  <!-- بارگذاری فیلتر intcomma -->
 
 {% block style %}
+     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.2.7/dist/tailwind.min.css" rel="stylesheet">
     <style>
         /* Base Grid Styles */
         .grid {
@@ -68,10 +69,154 @@
 
 
     </style>
+<style>
+    /* Form Styles */
+    .filters {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filters-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* فاصله بین عناصر */
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1; /* برای توزیع یکنواخت فیلترها */
+    }
+
+    .filter-label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .filter-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .filter-button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        align-self: flex-end; /* برای تراز کردن دکمه در انتهای فرم */
+    }
+
+    .filter-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+    <style>
+        /* استایل عمومی فرم فیلتر */
+        .filters {
+            display: flex;
+            justify-content: center; /* افقی مرکز کردن */
+            align-items: flex-start; /* شروع عمودی برای تراز کردن عناصر */
+            padding: 20px; /* فضای داخلی */
+            margin-top: 150px
+        }
+
+        .filters-form {
+            display: flex;
+            flex-wrap: wrap; /* اجازه به عناصر برای انتقال به خط بعد */
+            gap: 10px; /* فاصله بین عناصر */
+            max-width: 800px; /* حداکثر عرض فرم */
+            width: 100%; /* عرض کامل فرم */
+            margin: auto; /* مرکزیت */
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column; /* نمایش عمودی */
+            flex: 1; /* عرض قابل انعطاف */
+            min-width: 150px; /* عرض حداقلی برای جلوگیری از کوچکتر شدن بیش از حد */
+        }
+
+        .filter-label {
+            margin-bottom: 5px; /* فاصله پایین از برچسب */
+            font-weight: bold; /* ضخیم بودن برچسب */
+        }
+
+        .filter-input {
+            width: 100%; /* عرض کامل ورودی */
+            padding: 8px; /* فضای داخلی ورودی */
+            border: 1px solid #ccc; /* حاشیه ملایم */
+            border-radius: 4px; /* گوشه‌های گرد */
+        }
+
+        .filter-button {
+            padding: 10px 20px; /* فضای داخلی دکمه */
+            border: none; /* حاشیه نداشتن */
+            background-color: #007bff; /* رنگ پس‌زمینه دکمه */
+            color: white; /* رنگ متن دکمه */
+            border-radius: 4px; /* گوشه‌های گرد */
+            cursor: pointer; /* اشاره‌گر دست برای کلیک */
+            font-size: 16px; /* اندازه فونت دکمه */
+        }
+
+        /* مدیا کوئری برای صفحه‌های کوچکتر از 756 پیکسل */
+        @media (max-width: 756px) {
+            .filters{
+                margin-top: 15px;
+            }
+            .filters-form {
+                flex-direction: column; /* نمایش عمودی برای فرم */
+                align-items: stretch; /* کشش عناصر برای عرض کامل */
+            }
+
+            .filter-group {
+                width: 100%; /* عرض کامل گروه فیلتر */
+                margin-bottom: 10px; /* فاصله پایین بین گروه‌ها */
+            }
+
+            .filter-button {
+                width: 100%; /* عرض کامل دکمه */
+                margin-top: 10px; /* فاصله بالای دکمه */
+            }
+        }
+    </style>
+
 {% endblock %}
 
 {% block main %}
-    <section class="py-[150px] container products-section">
+    <!-- بخش جستجو و فیلتر -->
+    <section class="container" style="">
+        <!-- فیلتر و جستجو -->
+          <div class="filters">
+            <form method="GET" action="{% url 'product_app:product_list' %}" class="filters-form">
+                <div class="filter-group">
+                    <label class="filter-label" for="search">جستجو:</label>
+                    <input type="text" id="search" name="search" class="filter-input"
+                           placeholder="نام محصول را وارد کنید" value="{{ request.GET.search }}">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="min_price">قیمت از:</label>
+                    <input type="number" id="min_price" name="min_price" class="filter-input" placeholder="قیمت حداقل"
+                           value="{{ request.GET.min_price }}">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="max_price">قیمت تا:</label>
+                    <input type="number" id="max_price" name="max_price" class="filter-input" placeholder="قیمت حداکثر"
+                           value="{{ request.GET.max_price }}">
+                </div>
+                <button type="submit" class="filter-button">اعمال فیلتر</button>
+            </form>
+        </div>
+
+    </section>
+
+    <section class="container products-section">
         <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 md:gap-5 child:bg-white child:dark:bg-zinc-700 shadow-normal child:rounded-2xl child:p-2 child:md:p-5">
             {% for product in products %}
                 <div>
@@ -80,8 +225,9 @@
                         {% if product.images.exists %}
                             <img src="{{ product.images.first.image.url }}" class="md:w-auto mx-auto" loading="lazy"
                                  alt="{{ product.images.first.alt_text }}">
-                            {% else %}
-                            <img src="{% static 'img/products/productDefault.png' %}" class="md:w-auto mx-auto" loading="lazy" alt="product img not loaded">
+                        {% else %}
+                            <img src="{% static 'img/products/productDefault.png' %}" class="md:w-auto mx-auto"
+                                 loading="lazy" alt="product img not loaded">
                         {% endif %}
                         {% if product.discount_percentage %}
                             {% if product.status == "in_stock" %}
@@ -158,17 +304,24 @@
                         </div>
                     </div>
                 </div>
+
             {% endfor %}
         </div>
+    {% if not products %}
+    	<div class=" shadow-normal text-zinc-700 dark:text-white mx-auto" style="">
+                محصولی که با شرایط شما جور باشه پیدا نشد!
+                </div>
+    {% endif %}
     </section>
 
-    <!-- پیجینیشن -->
+    <!-- pagintion -->
     <div class="pagination">
         {% if page_obj.has_next %}
 
-            <a href="?page={{ page_obj.next_page_number }}" class="pagination-button pagination-next" >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pagination-icon">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-button pagination-next">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="pagination-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                 </svg>
             </a>
         {% endif %}
@@ -179,8 +332,9 @@
 
         {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}" class="pagination-button pagination-prev">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pagination-icon">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="pagination-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                 </svg>
             </a>
         {% endif %}
@@ -188,5 +342,5 @@
 {% endblock %}
 
 {% block script %}
-    {# You can add custom scripts here #}
+
 {% endblock %}

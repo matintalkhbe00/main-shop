@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+    <style>
+        .form-container {
+            background-color: var(--form-bg-color);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--label-color);
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--focus-border-color);
+            outline: none;
+            box-shadow: 0 0 0 2px var(--focus-shadow-color);
+        }
+        .error-message p {
+            color: var(--error-color);
+            background-color: var(--error-bg-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .btn-submit {
+            background-color: var(--btn-bg-color);
+            color: var(--btn-text-color);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: var(--btn-hover-bg-color);
+        }
+
+        /* تنظیمات دارک مود */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --form-bg-color: #1f2937; /* رنگ پس‌زمینه در حالت دارک مود */
+                --text-color: #f3f4f6; /* رنگ متن */
+                --label-color: #e5e7eb; /* رنگ برچسب‌ها */
+                --border-color: #374151; /* رنگ مرز فیلدها */
+                --input-bg-color: #4b5563; /* رنگ پس‌زمینه فیلدها */
+                --focus-border-color: #3b82f6; /* رنگ مرز فیلدها در حالت فوکوس */
+                --focus-shadow-color: rgba(59, 130, 246, 0.2); /* رنگ سایه فیلدها در حالت فوکوس */
+                --error-color: #dc2626; /* رنگ خطا */
+                --error-bg-color: #fef2f2; /* رنگ پس‌زمینه خطا */
+                --btn-bg-color: #3b82f6; /* رنگ پس‌زمینه دکمه */
+                --btn-text-color: #ffffff; /* رنگ متن دکمه */
+                --btn-hover-bg-color: #2563eb; /* رنگ پس‌زمینه دکمه در حالت هاور */
+            }
+        }
+
+        /* تنظیمات حالت روشن */
+        :root {
+            --form-bg-color: #ffffff; /* رنگ پس‌زمینه در حالت روشن */
+            --text-color: #333333; /* رنگ متن */
+            --label-color: #666666; /* رنگ برچسب‌ها */
+            --border-color: #dddddd; /* رنگ مرز فیلدها */
+            --input-bg-color: #f9f9f9; /* رنگ پس‌زمینه فیلدها */
+            --focus-border-color: #0056b3; /* رنگ مرز فیلدها در حالت فوکوس */
+            --focus-shadow-color: rgba(0, 86, 179, 0.2); /* رنگ سایه فیلدها در حالت فوکوس */
+            --error-color: #ff0000; /* رنگ خطا */
+            --error-bg-color: #ffe6e6; /* رنگ پس‌زمینه خطا */
+            --btn-bg-color: #007bff; /* رنگ پس‌زمینه دکمه */
+            --btn-text-color: #ffffff; /* رنگ متن دکمه */
+            --btn-hover-bg-color: #0056b3; /* رنگ پس‌زمینه دکمه در حالت هاور */
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <main class="py-[150px]">
+        <div class="container mx-auto max-w-lg">
+            <div class="form-container">
+                <h1 class="text-center mb-6">لطفا اطلاعات تماس خود را وارد کنید</h1>
+                <form method="post" action="{% url 'account_app:contact_form_submit' %}">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="error-message">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="id_subject">موضوع پیام</label>
+                        {{ form.subject }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_message">متن پیام</label>
+                        {{ form.message }}
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-submit">ارسال پیام</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

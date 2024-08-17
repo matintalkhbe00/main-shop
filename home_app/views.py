@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.views import View
 from django.views.generic import TemplateView
 
-from product_app.models import Order, OrderItem
+from home_app.models import CategoryProduct
+from product_app.models import Order, OrderItem, SubCategory, Category, Product
 
 
 # Create your views here.
@@ -12,6 +14,20 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+
+        new_products_category = get_object_or_404(Category, name="new_products")
+        best_selling_category = get_object_or_404(Category, name="best_selling")
+
+        new_subcategories = SubCategory.objects.filter(category=new_products_category)
+        best_subcategory = SubCategory.objects.filter(category=best_selling_category)
+
+        new_products = Product.objects.filter(subcategories__in=new_subcategories).distinct()[:8]
+        best_products = Product.objects.filter(subcategories__in=best_subcategory).distinct()[:8]
+
+        categories = CategoryProduct.objects.all()
+
+
         if self.request.user.is_authenticated:
             user = self.request.user
             order = Order.objects.filter(user=user, status="notRegistered").first()
@@ -19,9 +35,20 @@ class HomeView(TemplateView):
             context.update({
                 'user': user,
                 'order': order,
-                'count': count
+                'count': count,
+                'products': new_products,
+                'best_selling_products': best_products,
+                'categories': categories,
             })
 
-
+        else:
+            context.update({
+                'products': new_products,
+                'best_selling_products' : best_products,
+                'categories': categories,
+            })
 
         return context
+
+
+

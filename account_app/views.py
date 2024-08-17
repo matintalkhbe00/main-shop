@@ -1,27 +1,32 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views import View
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 
 from product_app.forms import AddressForm
-from product_app.models import Order
-from .forms import CustomLoginForm
+from product_app.models import Order, User
+from .forms import CustomLoginForm, UserCreationForm, ContactForm
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
+
+from .models import Address, ContactUs
+
 
 # Create your views here.
 
 class LoginView(FormView):
     template_name = 'account_app/login.html'
     form_class = CustomLoginForm
-    success_url = reverse_lazy('home')  # به صفحه‌ای که پس از ورود موفقیت‌آمیز کاربر هدایت می‌شود، تغییر دهید
+    success_url = reverse_lazy('home')  # تغییر به صفحه‌ای که پس از ورود موفقیت‌آمیز هدایت می‌شود
 
     def dispatch(self, request, *args, **kwargs):
-        # اگر کاربر قبلاً وارد سیستم شده باشد، او را به صفحه اصلی هدایت کن و پیام مناسب را اضافه کن
         if request.user.is_authenticated:
             messages.info(request, 'شما قبلاً وارد سیستم شده‌اید.')
             return redirect(self.success_url)
@@ -38,15 +43,66 @@ class LoginView(FormView):
             form.add_error(None, 'نام کاربری یا رمز عبور نادرست است.')
             return self.form_invalid(form)
 
-    def form_invalid(self, form):
-        return super().form_invalid(form)
-class SignupView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        notification_type = self.request.GET.get('notification')
+        if notification_type == 'not_login':
+            show_notification = True
+            notification_message = 'شما هنوز ثبت نام نکرده اید'
+            notification_status = 'error'
+        else:
+            show_notification = False
+            notification_message = ''
+            notification_status = 'none'
+
+        context.update({
+            'show_notification': show_notification,
+            'notification_message': notification_message,
+            'notification_status': notification_status,
+        })
+        return context
+
+class SignupView(FormView):
     template_name = "account_app/signup.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy('home')  # صفحه‌ای که پس از ثبت‌نام موفقیت‌آمیز هدایت می‌شود
 
-class ProductListView(TemplateView):
-    template_name = "account_app/product.html"
+    def dispatch(self, request, *args, **kwargs):
+        # اگر کاربر قبلاً وارد سیستم شده باشد، او را به صفحه اصلی هدایت کن
+        if request.user.is_authenticated:
+            messages.info(request, 'شما قبلاً وارد سیستم شده‌اید.')
+            return redirect(self.success_url)
+        return super().dispatch(request, *args, **kwargs)
 
-from django.views.generic import TemplateView
+    def form_valid(self, form):
+        # مقایسه پسوردها
+        password1 = form.cleaned_data.get('password1')
+        password2 = form.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            form.add_error('password2', 'رمزهای عبور مطابقت ندارند')
+            return self.form_invalid(form)
+
+        # بررسی تکراری بودن شماره تلفن
+        phone = form.cleaned_data.get('phone')
+        if User.objects.filter(phone=phone).exists():
+            form.add_error('phone', 'این شماره تلفن قبلاً ثبت شده است.')
+            return self.form_invalid(form)
+
+        # ذخیره کاربر
+        user = form.save()
+        # ورود کاربر به سیستم به صورت خودکار پس از ثبت‌نام
+        login(self.request, user)
+        messages.success(self.request, 'ثبت نام با موفقیت انجام شد!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'لطفاً فرم را بررسی کنید.')
+        return super().form_invalid(form)
+
+class LogoutView(View):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('home')
 
 
 class ProfileView(LoginRequiredMixin,TemplateView):
@@ -56,7 +112,7 @@ class ProfileView(LoginRequiredMixin,TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
-        order = Order.objects.all().order_by('-id')
+        order = Order.objects.filter(user=user).order_by('-id')
         notification_type = self.request.GET.get('notification')
         if notification_type == 'confirmOrder':
             show_notification = True
@@ -80,20 +136,97 @@ class ProfileView(LoginRequiredMixin,TemplateView):
         return super().get(request, *args, **kwargs)
 
 
+# ///////////////////////////////////////////
+
+@method_decorator(login_required, name='dispatch')
+class AddAddressView(CreateView):
+    model = Address
+    form_class = AddressForm
+    template_name = 'account_app/add_address.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+
+        next_url = self.request.POST.get('next') or self.request.GET.get('next')
+        print(next_url)
+        if next_url:
+            return next_url
+        return reverse_lazy('account_app:profile')
+
+
+class EditAddressView(UpdateView):
+    model = Address
+    form_class = AddressForm
+    template_name = 'account_app/edit_address.html'
+
+    def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse_lazy('account_app:profile')
+
+
+class DeleteAddressView(LoginRequiredMixin, DeleteView):
+    model = Address
+    template_name = 'account_app/delete_address.html'
+
+    def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse_lazy('account_app:profile')
+
+    def get_object(self, queryset=None):
+        # فیلتر کردن بر اساس کاربر جاری
+        obj = get_object_or_404(Address, pk=self.kwargs['pk'], user=self.request.user)
+        return obj
+@login_required
+def upload_profile_picture(request):
+    if request.method == 'POST':
+        if 'profile_picture' in request.FILES:
+            profile_picture = request.FILES['profile_picture']
+
+            # حذف تصویر قبلی اگر وجود دارد
+            if request.user.profile_picture:
+                delete_profile_picture(request)
+
+            # ذخیره تصویر جدید
+            request.user.profile_picture = profile_picture
+            request.user.save()
+
+            return redirect('account_app:profile')
+    return redirect('account_app:profile')
 
 
 @login_required
-def add_address(request):
+def delete_profile_picture(request):
     if request.method == 'POST':
-        form = AddressForm(request.POST)
-        if form.is_valid():
-            address = form.save(commit=False)
-            address.user = request.user
-            address.save()
-            return redirect('product_app:order_details')  # یا هر URL دیگری که مناسب باشد
-    else:
-        form = AddressForm()
+        user = request.user
+        if user.profile_picture:
+            filepath = user.profile_picture.path
+            if os.path.exists(filepath):
+                os.remove(filepath)
+            user.profile_picture = None
+            user.save()
 
-    return render(request, 'account_app/add_address.html', {'form': form})
+        return redirect('account_app:profile')
 
 
+# /////////////////////////////////////////////////////////////
+
+
+
+
+
+class ContactUsView(LoginRequiredMixin, CreateView):
+    model = ContactUs
+    form_class = ContactForm
+    template_name = 'account_app/contact_form.html'
+    success_url = reverse_lazy('home')  # مسیر هدایت پس از ارسال موفق
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)

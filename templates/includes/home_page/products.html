@@ -1,0 +1,27 @@
+{% load static %}
+{% load humanize %}
+<section class="products">
+            <div class="container">
+                <!-- section head  -->
+                <div class="flex justify-between items-end mb-5 md:mb-12 ">
+                    <!-- products list  -->
+                    <div>
+                        <h3 class="section-title  mt-8 md:mt-[120px]">جدیدترین محصولات</h3>
+                        <span class="section-subtitle">فرآوری شده از دانه قهوه</span>
+                    </div>
+                    <a href="{% url 'product_app:product_list' %}" class="section-link">
+                        <!-- Desktop Mode  -->
+                        
+                        <span class="hidden md:inline-block">مشاهده همه محصولات</span>
+                        <!-- Mobile Mode  -->
+                        <span class="inline-block md:hidden">مشاهده همه</span>
+                        <svg class="w-5 h-5">
+                            <use href="#chevron-left"></use>
+                        </svg>
+                    </a>
+                </div>
+                <!-- section body  -->
+                {% include 'includes/extends/show_products.html' %}
+
+            </div>
+        </section>

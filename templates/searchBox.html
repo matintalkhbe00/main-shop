@@ -1,0 +1,21 @@
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'style/searchbox.css' %}">
+{% endblock %}
+
+    <form onsubmit="submitFn(this, event);">
+        <div class="search-wrapper">
+            <div class="input-holder">
+                <input type="text" class="search-input" placeholder="Type to search" />
+                <button class="search-icon" onclick="searchToggle(this, event);"><span></span></button>
+            </div>
+            <span class="close" onclick="searchToggle(this, event);"></span>
+            <div class="result-container">
+    
+            </div>
+        </div>
+    </form>
+
+{% block script %}
+    <script src="{% static 'script/searchbox.js' %}"></script>
+{% endblock %}

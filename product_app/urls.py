@@ -31,5 +31,5 @@ urlpatterns = [
     path('delete_order_item/', views.DeleteOrderItemView.as_view(), name='delete_order_item'),
 
     path('select_address/<int:address_id>/', views.select_address, name='select_address'),
-    path('add_address/', views.AddAddressView.as_view(), name='add_address'),
+
 ]

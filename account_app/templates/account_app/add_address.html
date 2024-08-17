@@ -53,6 +53,17 @@
             color: #f44336;
             margin-top: 10px;
         }
+        .hint-address{
+            text-align: center;
+            justify-items: center;
+                padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+        }
     </style>
 {% endblock %}
 
@@ -60,9 +71,20 @@
 	<body>
     <main class="py-[150px]">
         <div class="container">
-        <h1>افزودن آدرس جدید</h1>
-        <form method="post" action="{% url 'product_app:add_address' %}">
+        <div class="hint-address">
+            <p><strong>لطفا آدرس خود را اضافه کنید</strong></p>
+        </div>
+        <form method="post" action="{% url 'account_app:addAddress' %}">
             {% csrf_token %}
+                        {% if form.errors %}
+                <div class="error-message">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="form-group">
                 <label for="first_name">نام</label>
                 {{ form.first_name }}
@@ -87,18 +109,11 @@
                 <label for="postal_code">کد پستی</label>
                 {{ form.postal_code }}
             </div>
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
             <div class="form-group">
                 <button type="submit">ثبت آدرس</button>
             </div>
-            {% if form.errors %}
-                <div class="error-message">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            {% endif %}
+
         </form>
     </div>
     </main>

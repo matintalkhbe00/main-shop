@@ -23,7 +23,7 @@ from coffee import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("home_app.urls")),
-    path('',include("account_app.urls")),
+    path('account/',include("account_app.urls")),
     path('',include("product_app.urls")),
 ]
 

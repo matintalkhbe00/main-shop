@@ -1,0 +1,130 @@
+{% load static %}
+{% load humanize %}
+<!-- best-selling  -->
+<section class="best-selling mb-8 md:mb-20">
+    <div class="container">
+        <div class="flex justify-between items-end mb-5 md:mb-12 ">
+            <!-- best-selling list  -->
+            <!-- best-selling header  -->
+            <div>
+                <h3 class="section-title">محصولات پر فروش</h3>
+                <span class="section-subtitle">پیشنهاد قهوه خور ها ...</span>
+            </div>
+            <!-- swiper  -->
+            <div class="flex gap-x-3 md:gap-x-[18px]">
+                <div class="swiper-button-next-custom ">
+                    <svg class=" w-5 h-5 md:w-[20px] md:h-[20px] rotate-180">
+                        <use href="#chevron-left-mini"></use>
+                    </svg>
+                </div>
+                <div class="swiper-button-prev-custom">
+                    <svg class="w-5 h-5 md:w-[20px] md:h-[20px]">
+                        <use href="#chevron-left-mini"></use>
+                    </svg>
+                </div>
+            </div>
+            <!-- Slider main container -->
+
+        </div>
+        <div class="swiper">
+            <!-- Additional required wrapper -->
+            <div
+                    class="swiper-wrapper child:bg-white child:dark:bg-zinc-700 shadow-normal child:rounded-2xl child:p-2 child:md:p-5">
+                <!-- Slides -->
+                    
+                {% for product in best_selling_products %}
+                    <div class="swiper-slide">
+                        <!-- Images and discount -->
+                        <div class="relative mb-2 md:mb-5">
+                            {% if product.images.exists %}
+                                <img src="{{ product.images.first.image.url }}" class="md:w-auto mx-auto" loading="lazy"
+                                     alt="{{ product.images.first.alt_text }}">
+                            {% else %}
+                                <img src="{% static 'img/products/productDefault.png' %}" class="md:w-auto mx-auto"
+                                     loading="lazy"
+                                     alt="product img not loaded">
+                            {% endif %}
+                            {% if product.discount_percentage %}
+                                {% if product.status == "in_stock" %}
+
+                                    <span class="absolute block top-1 right-1 bg-orange-300 h-5 md:h-[30px] rounded-full px-2.5 md:px-3 py-1 font-DanaDemiBold text-xs md:text-base text-white dark:text-zinc-700">
+                                {{ product.discount_percentage }}%
+                            </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <!-- Product title -->
+                        <a href="{% url 'product_app:product_detail' product.id %}"
+                           class="text-sm md:text-xl line-clamp-2 text-zinc-700 dark:text-white mt-2 md:mt-5 mb-1.5 md:mb-2.5 h-10 md:h-14">
+                            {{ product.name }}
+                        </a>
+                        <!-- Price -->
+                        <div class="flex gap-x-2 md:gap-2.5 pb-2.5 md:pb-4 items-center">
+                            {% if product.status == 'in_stock' %}
+                                {% if product.discount_percentage %}
+                                    <div class="flex items-center text-gray-400 line-through decoration-red-400">
+                                        <span class="text-sm md:text-xl">{{ product.price|intcomma }}</span>
+                                        <!-- استفاده از فیلتر intcomma -->
+                                        <span class="hidden md:inline-block text-sm tracking-tighter">تومان</span>
+                                    </div>
+                                    <div class="flex items-center text-teal-600 dark:text-emerald-500">
+                                    <span class="text-base md:text-xl font-DanaDemiBold">
+                                        {{ product.get_final_price|intcomma }}  <!-- استفاده از فیلتر intcomma -->
+                                    </span>
+                                        <span class="text-xs md:text-sm tracking-tighter">تومان</span>
+                                    </div>
+
+                                {% else %}
+                                    <div class="flex items-center text-teal-600 dark:text-emerald-500">
+                                    <span class="text-base md:text-xl font-DanaDemiBold">
+                                        {{ product.price|intcomma }}  <!-- استفاده از فیلتر intcomma -->
+                                    </span>
+                                        <span class="text-xs md:text-sm tracking-tighter">تومان</span>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="text-red-400 text-base md:text-xl">
+                                    محصول موجود نیست
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- Shopping and comparison SVG -->
+                        <div class="flex justify-between items-center">
+                            <a href="{% url 'product_app:product_detail' product.id %}" class="flex gap-px md:gap-1.5">
+                                <svg class="w-7 h-7 p-1 md:w-9 md:h-9 md:p-2 rounded-full text-gray-400 bg-gray-100 stroke-[1.5px] dark:bg-zinc-800 hover:bg-teal-600 dark:hover:bg-emerald-500 hover:text-white cursor-pointer transition-all">
+                                    <use href="#shopping-cart"></use>
+                                </svg>
+
+                            </a>
+                            <!-- Rating -->
+                            <div class="flex items-center">
+                                <div class="flex items-center">
+                                    <div class="flex flex-row-reverse">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= product.calculate_average_rating %}
+                                                <svg class="w-4 h-4 md:w-6 md:h-6 text-yellow-400 border-solid">
+                                                    <use href="#star"></use>
+                                                </svg>
+                                            {% else %}
+                                                <svg class="w-4 h-4 md:w-6 md:h-6 text-gray-300 dark:text-gray-400">
+                                                    <use href="#star"></use>
+                                                </svg>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="text-xs md:text-sm text-white ml-2 pr-2" style="padding-top: 6px">
+                                        {{ product.calculate_average_rating|floatformat:1 }} / 5
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+        </div>
+
+    </div>
+</section>

@@ -1,0 +1,18 @@
+{% load static %}        
+<!-- proudacts category  -->
+        <section class="proudacts-category mb-10 md:mb-20">
+            <div class="container">
+                <div class="flex items-center justify-center gap-y-6 gap-x-[29px] md:gap-[65px] flex-wrap">
+                    {% for category in categories %}
+                    	<div class="w-25 md:w-50 text-center">
+                        <div>
+                            <img src="{{ category.img.url }}" alt="{{ category.name }}" loading="lazy">
+                        </div>
+                        <span
+                            class="inline-block h-8 font-DanaDemiBold text-sm md:text-xl text-zinc-700 dark:text-white mt-1.5 md:mt-2.5">{{ category.name }}</span>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </section>

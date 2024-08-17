@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, FormView
 from django.shortcuts import render, get_object_or_404, redirect
@@ -37,6 +38,8 @@ def add_reply(request, review_id):
 
 class ProductDetailView(View):
     def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return redirect(f'/account/login/?next={request.get_full_path()}&notification=not_login')
         product = get_object_or_404(Product, pk=pk)
         product_images = product.images.all()
         product_features = product.features.all()
@@ -56,8 +59,10 @@ class ProductDetailView(View):
 
         return render(request, 'product_app/product_details.html', context)
 
-    @method_decorator(login_required)
+
     def post(self, request, pk):
+        if not request.user.is_authenticated:
+            return redirect(f'/account/login/?next={request.get_full_path()}&notification=not_login')
         product = get_object_or_404(Product, pk=pk)
         form = ProductReviewForm(request.POST)
         if form.is_valid():
@@ -84,6 +89,27 @@ class ProductListView(ListView):
         context['products_with_ratings'] = products_with_ratings
         return context
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # دریافت پارامتر جستجو از URL
+        search = self.request.GET.get('search', '')
+
+        # فیلتر بر اساس نام محصول و توضیحات
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) | Q(description__icontains=search)
+            )
+
+        # فیلتر بر اساس قیمت
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        return queryset
 
 # ////////////////////////////////////////////////////////////////
 
@@ -328,15 +354,6 @@ class DeleteOrderItemView(View):
             return redirect(reverse('product_app:order_detail') + "?notification=delete_failed")
 
 
-class AddAddressView(LoginRequiredMixin, FormView):
-    form_class = AddressForm
-    success_url = reverse_lazy('product_app:order_detail')
-
-    def form_valid(self, form):
-        new_address = form.save(commit=False)
-        new_address.user = self.request.user
-        new_address.save()
-        return super().form_valid(form)
 
 
 def select_address(request, address_id):
@@ -350,3 +367,4 @@ def select_address(request, address_id):
     request.session['selected_address_id'] = address.id
 
     return redirect(reverse('product_app:order_detail') + "?notification=address_selected")
+

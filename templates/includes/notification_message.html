@@ -1,0 +1,69 @@
+{% load static %}
+{% block style %}
+    <style>
+        /* استایل‌های عمومی برای اعلان‌ها */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: -300px; /* Start off the screen */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: right 0.5s ease-in-out;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            right: 20px; /* Position it in view */
+        }
+
+        .notification p {
+            margin: 0;
+        }
+
+        .success {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .warning {
+            background-color: #ffeb3b;
+            color: #27272a;
+        }
+
+        .error {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+
+
+{% if show_notification %}
+    <div id="notification" class="{{ notification_status }} notification">
+        <p id="notification-message"><span
+        >{{ notification_message }}</span></p>
+    </div>
+{% endif %}
+
+
+{% block script %}
+    <script>
+        // script.js
+        document.addEventListener('DOMContentLoaded', function () {
+            var notification = document.getElementById('notification');
+
+            if (notification) {
+                // Show the notification
+                notification.classList.add('show');
+
+                // Hide the notification after 5 seconds
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                }, 5000); // Change duration as needed
+            }
+        });
+
+    </script>
+{% endblock %}

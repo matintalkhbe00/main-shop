@@ -1,26 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
 {% block main %}
-    {% include 'includes/topHeader.html' %}
-    {% include 'includes/products.html' %}
-    {% include 'includes/category-banner.html' %}
-    {% include 'includes/protractCategory.html' %}
-    {% include 'includes/best-selling.html' %}
-    {% include 'includes/coffee-club.html' %}
-    {% include 'includes/services.html' %}
-    {% include 'includes/contact-us.html' %}
-    {% include 'includes/blog.html' %}
+    {% include 'includes/home_page/topHeader.html' %}
+    {% include 'includes/home_page/products.html' %}
+    {% include 'includes/home_page/category-banner.html' %}
+    {% include 'includes/home_page/protractCategory.html' %}
+    {% include 'includes/home_page/best-selling.html' %}
+    {% include 'includes/home_page/coffee-club.html' %}
+    {% include 'includes/home_page/services.html' %}
+    {% include 'includes/home_page/contact-us.html' %}
+    {% include 'includes/home_page/blog.html' %}
 {% endblock %}
-
-</body>
-</html>

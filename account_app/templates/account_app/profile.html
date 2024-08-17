@@ -277,13 +277,100 @@
 
     </style>
     <style>
-    .scrollable-section {
-    width: auto;
-    height: 800px;
-    overflow-y: scroll;
+        .scrollable-section {
+            width: auto;
+            height: 800px;
+            overflow-y: scroll;
 
-    padding: 10px;}
+            padding: 10px;
+        }
+
+        .address-list {
+            margin: 20px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .address-list li, .address-list a {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
+<style>
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    #profile-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+
+    .profile-header div {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .profile-header h1 {
+        font-size: 1.5em;
+        margin: 0;
+    }
+
+    .profile-header p {
+        margin: 0;
+    }
+
+    #select-button,
+    #submit-button,
+    #delete-form button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    #select-button {
+        background-color: #007bff;
+        color: white;
+    }
+
+    #select-button:hover {
+        background-color: #0056b3;
+    }
+
+    #submit-button {
+        background-color: #28a745;
+        color: white;
+        display: none; /* Hidden by default */
+    }
+
+    #submit-button:hover {
+        background-color: #218838;
+    }
+
+    #delete-form button {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    #delete-form button:hover {
+        background-color: #c82333;
+    }
+</style>
+
 {% endblock %}
 
 {% block main %}
@@ -297,118 +384,152 @@
             </div>
 
             <!-- جزئیات پروفایل -->
-            <div class="profile-details">
-                <!-- هدر پروفایل -->
-                <div class="profile-header">
-                    <img src="{{ user.profile_picture.url }}" alt="عکس پروفایل کاربر">
-                    <div>
-                        <h1>{{ user.fullname }}</h1>
-                        <p>شماره تلفن: {{ user.phone }}</p>
-                        <p>ایمیل: {{ user.email }}</p>
-                        <p>وضعیت:
-                            {% if user.is_active %}
-                                فعال
-                            {% else %}
-                                غیرفعال
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
+            <!-- جزئیات پروفایل -->
+<div class="profile-details">
+    <!-- هدر پروفایل -->
+    <div class="profile-header">
+        <!-- نمایش عکس پروفایل -->
+        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'img/static/default-profile.jpg' %}{% endif %}"
+             alt="عکس پروفایل کاربر" id="profile-picture">
 
-                <!-- محتوای تب‌ها -->
-                <div class="tab-content info active">
-                    <h2>اطلاعات کلی</h2>
-                    <p>نام کامل: {{ user.fullname }}</p>
-                    <p>شماره تلفن: {{ user.phone }}</p>
-                    <p>ایمیل: {{ user.email }}</p>
-                    <p>وضعیت:
-                        {% if user.is_active %}
-                            فعال
-                        {% else %}
-                            غیرفعال
-                        {% endif %}
-                    </p>
-                </div>
+        <div>
+            <h1>{{ user.fullname }}</h1>
+            <p>شماره تلفن: {{ user.phone }}</p>
+            <p>ایمیل: {{ user.email }}</p>
+            <p>وضعیت:
+                {% if user.is_active %}
+                    فعال
+                {% else %}
+                    غیرفعال
+                {% endif %}
+            </p>
 
-                <div class="tab-content addresses">
-                    <h2>آدرس‌ها</h2>
-                    {% if user.addresses.exists %}
-                        {% for address in user.addresses.all %}
-                            <div class="address address-item">
-                                <p>نام: {{ address.first_name }}</p>
-                                <p>نام خانوادگی: {{ address.last_name }}</p>
-                                <p>ایمیل: {{ address.email }}</p>
-                                <p>شماره تلفن: {{ address.phone }}</p>
-                                <p>آدرس: {{ address.address }}</p>
-                                <p>کد پستی: {{ address.postal_code }}</p>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>آدرس‌ها پیدا نشدند.</p>
-                    {% endif %}
-                </div>
+            <!-- فرم آپلود عکس پروفایل -->
+            {% if user.profile_picture %}
+                <!-- حذف عکس پروفایل -->
+                <form id="delete-form" method="POST" action="{% url 'account_app:delete_profile_picture' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:underline">حذف عکس پروفایل</button>
+                </form>
+            {% else %}
+                <!-- آپلود عکس پروفایل -->
+                <form id="upload-form" method="POST" enctype="multipart/form-data" action="{% url 'account_app:upload_profile_picture' %}">
+                    {% csrf_token %}
+                    <input type="file" name="profile_picture" id="profile-picture-input" accept="image/*" class="hidden">
+                    <button type="button" id="select-button" class="text-blue-500 hover:underline">انتخاب عکس جدید</button>
+                    <button type="submit" id="submit-button" class="hidden">آپلود عکس</button>
+                </form>
+            {% endif %}
 
-                <div class="tab-content products ">
-                <div class="scrollable-section">
-                    {% for order in orders %}
-                        <div class="order-summary">
+            <!-- فرم خروج -->
+            <form method="POST" action="{% url 'account_app:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-gray-500 hover:underline">خروج</button>
+            </form>
+        </div>
+    </div>
 
-                            <a href="{% url 'product_app:order_id_search' order.id %}"
-                               class="order-status order-details-address"><strong>جزئیات سفارش</strong>
-                            </a>
-                            <div class="details">
-                                <!-- وضعیت سفارش -->
-                                <p class="order-status"><strong>وضعیت:</strong>
-                                    <span class="status-label {{ order.status }}">{{ order.get_status_display }}</span>
-                                </p>
-
-                                <!-- تاریخ سفارش -->
-                                <p><strong>تاریخ :</strong> {{ order.created_at|date:"j E" }}</p>
-                                {% if order.original_price %}
-                                    <!-- قیمت اصلی کل محصولات -->
-                                    <p><strong>قیمت اصلی کل محصولات:</strong>
-                                        <span class="price">{{ order.original_price|intcomma }}</span> تومان
-                                    </p>
-                                {% endif %}
+    <!-- محتوای تب‌ها -->
+    <div class="tab-content info active">
+        <h2>اطلاعات کلی</h2>
+        <p>نام کامل: {{ user.fullname }}</p>
+        <p>شماره تلفن: {{ user.phone }}</p>
+        <p>ایمیل: {{ user.email }}</p>
+        <p>وضعیت:
+            {% if user.is_active %}
+                فعال
+            {% else %}
+                غیرفعال
+            {% endif %}
+        </p>
+    </div>
 
 
-                                <!-- کد تخفیف اعمال شده -->
-                                {% if order.discount_code.discount %}
-                                    <p><strong>کد تخفیف اعمال شده:</strong>
-                                        <span class="discount">%{{ order.discount_code.discount }}</span>
-                                    </p>
-                                {% endif %}
+<div class="tab-content addresses scrollable-section">
+    {% if user.addresses.exists %}
+        {% for address in user.addresses.all %}
+            <div class="address address-item">
+                <p>نام: {{ address.first_name }}</p>
+                <p>نام خانوادگی: {{ address.last_name }}</p>
+                <p>ایمیل: {{ address.email }}</p>
+                <p>شماره تلفن: {{ address.phone }}</p>
+                <p>آدرس: {{ address.address }}</p>
+                <p>کد پستی: {{ address.postal_code }}</p>
 
-                                {% if order.total_price %}
+                <!-- لینک‌های ویرایش و حذف -->
+                <div class="address-actions">
+                    <!-- لینک ویرایش -->
+                    <a href="{% url 'account_app:editAddress' address.id %}?next={% url 'account_app:profile' %}" class="text-blue-500 hover:underline">ویرایش</a>
 
-                                    <!-- قیمت کل -->
-                                    <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong>
-                                        <span class="total-price">{{ order.total_price|intcomma }}</span> تومان
-                                    </p>
-                                {% endif %}
-
-
-                                <!-- عکس‌های محصولات -->
-                                <div class="product-images">
-                                    {% for item in order.items.all %}
-                                        {% if item.product.images.all %}
-                                            <a href="{% url 'product_app:product_detail' item.product.id %}"
-                                               class="product-image-link">
-                                                <img src="{{ item.product.images.first.image.url }}"
-                                                     alt="{{ item.product.name }}" class="product-image">
-                                            </a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-
-
+                    <!-- لینک حذف -->
+                    <a href="{% url 'account_app:deleteAddress' address.id %}?next={% url 'account_app:profile' %}" class="text-red-500 hover:underline">حذف</a>
                 </div>
             </div>
+        {% endfor %}
+    {% else %}
+        <p>آدرسی پیدا نشد!</p>
+    {% endif %}
+    <div class="address-list">
+        <a href="{% url 'account_app:addAddress' %}?next={% url 'account_app:profile' %}" class="text-blue-500 hover:underline">افزودن آدرس جدید</a>
+    </div>
+</div>
+
+    <div class="tab-content products">
+        <div class="scrollable-section">
+            {% for order in orders %}
+                <div class="order-summary">
+                    <a href="{% url 'product_app:order_id_search' order.id %}" class="order-status order-details-address">
+                        <strong>جزئیات سفارش</strong>
+                    </a>
+                    <div class="details">
+                        <!-- وضعیت سفارش -->
+                        <p class="order-status">
+                            <strong>وضعیت:</strong>
+                            <span class="status-label {{ order.status }}">{{ order.get_status_display }}</span>
+                        </p>
+
+                        <!-- تاریخ سفارش -->
+                        <p><strong>تاریخ :</strong> {{ order.created_at|date:"j E" }}</p>
+
+                            <!-- قیمت اصلی کل محصولات -->
+                            <p><strong>قیمت کل محصولات:</strong>
+                                <span class="price">{{ order.original_price|intcomma }}</span> تومان
+                            </p>
+
+
+                        <!-- کد تخفیف اعمال شده -->
+                        {% if order.discount_code.discount %}
+                            <p><strong>کد تخفیف اعمال شده:</strong>
+                                <span class="discount">%{{ order.discount_code.discount }}</span>
+                            </p>
+                        {% endif %}
+
+                        {% if order.discount_code.discount %}
+                            <!-- قیمت کل -->
+                            <p><strong>قیمت کل محصولات با احتساب تخفیف :</strong>
+                                <span class="total-price">{{ order.total_price|intcomma }}</span> تومان
+                            </p>
+                        {% endif %}
+
+                        <!-- عکس‌های محصولات -->
+                        <div class="product-images">
+                            {% for item in order.items.all %}
+                                {% if item.product.images.all %}
+                                    <a href="{% url 'product_app:product_detail' item.product.id %}" class="product-image-link">
+                                        <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" class="product-image">
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div><p>سفارشی برای نمایش وجود ندارد</p></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
         </div>
         <!-- Notification -->
         {% if show_notification %}
@@ -441,7 +562,7 @@
         });
     </script>
     <script>
-     function activateTab(tabName) {
+        function activateTab(tabName) {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
@@ -477,4 +598,17 @@
         });
 
     </script>
+
+    <script>
+        document.getElementById('select-button').addEventListener('click', function () {
+            document.getElementById('profile-picture-input').click();
+        });
+
+        document.getElementById('profile-picture-input').addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                document.getElementById('submit-button').style.display = 'inline';
+            }
+        });
+    </script>
+
 {% endblock %}

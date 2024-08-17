@@ -1,4 +1,5 @@
-from product_app.models import Order
+from product_app.models import Order, SubCategory
+
 
 def user_cart_context(request):
     if request.user.is_authenticated:
@@ -11,3 +12,5 @@ def user_cart_context(request):
             'count': count
         }
     return {}
+
+

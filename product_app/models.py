@@ -19,7 +19,7 @@ class Product(models.Model):
     discount_percentage = models.DecimalField(max_digits=2, decimal_places=0, blank=True, null=True,
                                               verbose_name='درصد تخفیف')
     status = models.CharField(max_length=20, choices=PRODUCT_STATUS_CHOICES, default='in_stock', verbose_name='وضعیت')
-
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='تاریخ ایجاد')
     def get_final_price(self):
         if self.discount_percentage and self.discount_percentage > 0:
             discount_amount = (self.price * self.discount_percentage) / 100
@@ -51,6 +51,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'محصول'
         verbose_name_plural = 'محصولات'
+        ordering = ['-created_at']
 
 
 class ProductImage(models.Model):
@@ -158,7 +159,11 @@ class Order(models.Model):
             return self.original_price - discount_amount
         return self.original_price
 
-# استفاده از سیگنال‌های Django برای به‌روزرسانی قیمت کل
+    def get_discount_price(self):
+        if self.discount_code and self.discount_code.is_valid():
+            discount_percentage = self.discount_code.discount
+            discount_amount = (self.original_price * discount_percentage) / 100
+            return discount_amount
 
 
     class Meta:
@@ -174,12 +179,12 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=0, verbose_name='قیمت')
 
     def get_total_price(self):
-        total_price = self.price * self.quantity
+        total_price = self.product.get_final_price() * self.quantity
         return total_price
 
     def get_discounted_price(self):
         if self.product.discount_percentage:
-            return self.price * self.product.discount_percentage /100
+            return self.product.get_final_price() * self.product.discount_percentage /100
 
 
 
@@ -195,5 +200,38 @@ def update_order_total_price(sender, instance, **kwargs):
     order = instance.order
     order.update_total_price()
 
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name='نام دسته‌بندی')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'دسته‌بندی'
+        verbose_name_plural = 'دسته‌بندی‌ها'
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE, verbose_name='دسته‌بندی اصلی')
+    products = models.ManyToManyField(Product, related_name='subcategories', blank=True, verbose_name='محصولات')
+
+    def __str__(self):
+        return self.category.name
+
+    class Meta:
+        verbose_name = 'زیر دسته‌بندی'
+        verbose_name_plural = 'زیر دسته‌بندی‌ها'
+
+class SubShop(models.Model):
+    categories = models.ManyToManyField(Category, related_name='subshops', verbose_name='دسته‌بندی‌های فروشگاه')
+
+    def __str__(self):
+        # نمایش نام‌های دسته‌بندی‌ها به صورت لیست در متد __str__
+        return f"فروشگاه با دسته‌بندی‌ها: {', '.join(str(cat) for cat in self.categories.all())}"
+
+    class Meta:
+        verbose_name = 'فروشگاه فرعی'
+        verbose_name_plural = 'فروشگاه‌های فرعی'
 
 
