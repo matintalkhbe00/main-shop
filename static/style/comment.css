@@ -84,7 +84,7 @@
 
 .scrollable-section {
     width: auto; /* عرض بخش اسکرول */
-    height: 800px; /* ارتفاع بخش اسکرول */
+    height: 300px; /* ارتفاع بخش اسکرول */
     overflow-y: scroll; /* فعال کردن اسکرول عمودی */
     border: 1px solid #ccc; /* حاشیه برای زیبایی */
     padding: 10px; /* فضای داخلی */

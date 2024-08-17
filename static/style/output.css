@@ -2989,6 +2989,10 @@ html.dark .services::after,
     height: 38px;
   }
 
+  .xl\:h-\[38px\] {
+    height: 38px;
+  }
+
   .md\:h-\[60px\] {
     height: 60px;
   }
@@ -3042,6 +3046,14 @@ html.dark .services::after,
   }
 
   .md\:w-\[38px\] {
+    width: 38px;
+  }
+
+  .md\:w-\[33px\] {
+    width: 33px;
+  }
+
+  .xl\:w-\[38px\] {
     width: 38px;
   }
 

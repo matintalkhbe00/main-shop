@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView
 
-from home_app.models import CategoryProduct
+from home_app.models import CategoryProduct, FAQ, Footer, PhoneCompany
 from product_app.models import Order, OrderItem, SubCategory, Category, Product
 
 
@@ -27,7 +27,6 @@ class HomeView(TemplateView):
 
         categories = CategoryProduct.objects.all()
 
-
         if self.request.user.is_authenticated:
             user = self.request.user
             order = Order.objects.filter(user=user, status="notRegistered").first()
@@ -39,6 +38,7 @@ class HomeView(TemplateView):
                 'products': new_products,
                 'best_selling_products': best_products,
                 'categories': categories,
+
             })
 
         else:
@@ -46,9 +46,38 @@ class HomeView(TemplateView):
                 'products': new_products,
                 'best_selling_products' : best_products,
                 'categories': categories,
+
             })
 
         return context
 
 
+class FAQView(TemplateView):
+    template_name = 'home_app/FAQhome.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        faqs = FAQ.objects.all()
+        context.update({
+            "faqs": faqs,
+        })
+
+        return context
+
+
+class GuaranteeView(TemplateView):
+    template_name = 'home_app/guarantee.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        info = Footer.objects.all().first()
+        phone = PhoneCompany.objects.all().first()
+
+        context.update({
+            'info': info,
+            'phone': phone,
+        })
+
+        return context

@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 
+from home_app.models import FAQ
 from product_app.forms import AddressForm
 from product_app.models import Order, User
 from .forms import CustomLoginForm, UserCreationForm, ContactForm
@@ -24,7 +25,7 @@ from .models import Address, ContactUs
 class LoginView(FormView):
     template_name = 'account_app/login.html'
     form_class = CustomLoginForm
-    success_url = reverse_lazy('home')  # تغییر به صفحه‌ای که پس از ورود موفقیت‌آمیز هدایت می‌شود
+    success_url = reverse_lazy('home_app:home')  # تغییر به صفحه‌ای که پس از ورود موفقیت‌آمیز هدایت می‌شود
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -65,7 +66,7 @@ class LoginView(FormView):
 class SignupView(FormView):
     template_name = "account_app/signup.html"
     form_class = UserCreationForm
-    success_url = reverse_lazy('home')  # صفحه‌ای که پس از ثبت‌نام موفقیت‌آمیز هدایت می‌شود
+    success_url = reverse_lazy('home_app:home')  # صفحه‌ای که پس از ثبت‌نام موفقیت‌آمیز هدایت می‌شود
 
     def dispatch(self, request, *args, **kwargs):
         # اگر کاربر قبلاً وارد سیستم شده باشد، او را به صفحه اصلی هدایت کن
@@ -102,7 +103,7 @@ class SignupView(FormView):
 class LogoutView(View):
     def post(self, request, *args, **kwargs):
         logout(request)
-        return redirect('home')
+        return redirect('home_app:home')
 
 
 class ProfileView(LoginRequiredMixin,TemplateView):
@@ -225,8 +226,19 @@ class ContactUsView(LoginRequiredMixin, CreateView):
     model = ContactUs
     form_class = ContactForm
     template_name = 'account_app/contact_form.html'
-    success_url = reverse_lazy('home')  # مسیر هدایت پس از ارسال موفق
+    success_url = reverse_lazy('home_app:home')  # مسیر هدایت پس از ارسال موفق
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        faqs = FAQ.objects.all()
+        context.update({
+            "faqs": faqs,
+        })
+
+        return context
+

@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.db import transaction
 
 from account_app.models import Address
+from home_app.models import FAQ
 from .forms import ProductReviewForm, ReplyForm, OrderItemUpdateForm, OrderItemDeleteForm, AddressForm
 from .models import Product, ProductReview, Order, OrderItem, DiscountCode
 
@@ -31,9 +32,9 @@ def add_reply(request, review_id):
             reply.author = request.user.fullname if request.user.fullname else request.user.phone
             reply.parent = review
             reply.save()
-            return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id])+'?active_tab=reviews')
+            return HttpResponseRedirect(
+                reverse('product_app:product_detail', args=[review.product.id]) + '?active_tab=reviews')
         return HttpResponseRedirect(reverse('product_app:product_detail', args=[review.product.id]))
-
 
 
 class ProductDetailView(View):
@@ -59,7 +60,6 @@ class ProductDetailView(View):
 
         return render(request, 'product_app/product_details.html', context)
 
-
     def post(self, request, pk):
         if not request.user.is_authenticated:
             return redirect(f'/account/login/?next={request.get_full_path()}&notification=not_login')
@@ -81,7 +81,6 @@ class ProductListView(ListView):
     template_name = 'product_app/product_list.html'
     context_object_name = 'products'
     paginate_by = 12
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -110,6 +109,7 @@ class ProductListView(ListView):
             queryset = queryset.filter(price__lte=max_price)
 
         return queryset
+
 
 # ////////////////////////////////////////////////////////////////
 
@@ -156,7 +156,7 @@ class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
         addresses = Address.objects.filter(user=user)
         selected_address_id = self.request.session.get('selected_address_id')
         order = Order.objects.filter(user=user, status="notRegistered")
-
+        faqs = FAQ.objects.all()
         notification_type = self.request.GET.get('notification')
 
         if notification_type == 'product_added':
@@ -220,7 +220,8 @@ class OrderNotRegisteredView(LoginRequiredMixin, TemplateView):
             'orders': order,
             'show_notification': show_notification,
             'notification_message': notification_message,
-            'notification_status' : notification_status
+            'notification_status': notification_status,
+            'faqs': faqs,
         })
 
         return context
@@ -230,12 +231,11 @@ class ConfirmOrderView(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.get(user=request.user, status="notRegistered")
         if not order.address:
-            return redirect(reverse('product_app:order_detail')+"?notification=order_address")
-
+            return redirect(reverse('product_app:order_detail') + "?notification=order_address")
 
         order.status = "pending"
         order.save()
-        return redirect(reverse("account_app:profile")+'?notification=confirmOrder')
+        return redirect(reverse("account_app:profile") + '?notification=confirmOrder')
 
 
 class OrderDetailsView(LoginRequiredMixin, TemplateView):
@@ -354,8 +354,6 @@ class DeleteOrderItemView(View):
             return redirect(reverse('product_app:order_detail') + "?notification=delete_failed")
 
 
-
-
 def select_address(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
     order = Order.objects.filter(user=request.user, status='notRegistered').first()
@@ -367,4 +365,3 @@ def select_address(request, address_id):
     request.session['selected_address_id'] = address.id
 
     return redirect(reverse('product_app:order_detail') + "?notification=address_selected")
-

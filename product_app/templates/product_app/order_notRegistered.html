@@ -362,7 +362,32 @@
             }
         }
     </style>
+        <style>
+        .faq-question {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
+        .faq-question:hover {
+            background-color: #0f766e;
+        }
+
+        .faq-answer {
+            display: none;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        .faq-question .svg {
+            transition: transform 0.5s ease;
+        }
+
+        .faq-question.active .svg {
+            transform: rotate(180deg);
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
@@ -467,7 +492,9 @@
                                                 <div>
                                                     <p><strong>کد تخفیف:</strong> {{ order.discount_code.name }}
                                                     </p>
-                                                    <span>سود شما از این خرید <strong style="color: #4CAF50">{{ order.get_discount_price|floatformat:0|intcomma }}</strong> معادل <strong style="color: #4CAF50">{{ order.discount_code.discount }}%</strong> از کل سفارش</span>
+                                                    <span>سود شما از این خرید <strong
+                                                            style="color: #4CAF50">{{ order.get_discount_price|floatformat:0|intcomma }}</strong> معادل <strong
+                                                            style="color: #4CAF50">{{ order.discount_code.discount }}%</strong> از کل سفارش</span>
                                                 </div>
                                                 <form method="post" action="{% url 'product_app:remove_discount' %}">
                                                     {% csrf_token %}
@@ -525,18 +552,62 @@
                 {% else %}
                     <p>هیچ سفارشی پیدا نشد.</p>
                 {% endif %}
+                <!-- FAQ Section -->
+                <div class="mt-8 bg-zinc-700 rounded-2xl shadow-lg p-4">
+                    <h4 class="text-2xl font-semibold mb-4">پرسش‌های متداول</h4>
+                    {% for faq in faqs %}
+                        <div class="bg-zinc-800 p-4 rounded-lg mb-4">
+                            <button class="faq-question flex justify-between items-center w-full p-4 text-left text-white bg-zinc-700 rounded-lg focus:outline-none">
+                                <span>{{ faq.question }}</span>
+                                <svg class="w-6 h-6 text-white transform transition-transform duration-300" fill="none"
+                                     stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="faq-answer mt-2 hidden p-4 bg-zinc-600 rounded-lg">
+                                <p>{{ faq.answer }}</p>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+
+                </div>
                 {% if show_notification %}
                     <div id="notification" class="{{ notification_status }} notification">
                         <p id="notification-message"><span
                         >{{ notification_message }}</span></p>
                     </div>
                 {% endif %}
+
             </main>
         </div>
     </main>
 {% endblock %}
 
 {% block script %}
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function () {
+                    const answer = button.nextElementSibling;
+                    const svg = button.querySelector('svg');
+
+                    if (answer.classList.contains('show')) {
+                        answer.classList.remove('show');
+                        svg.classList.remove('rotate-180');
+                    } else {
+                        document.querySelectorAll('.faq-answer').forEach(answer => answer.classList.remove('show'));
+                        document.querySelectorAll('.faq-question svg').forEach(svg => svg.classList.remove('rotate-180'));
+
+                        answer.classList.add('show');
+                        svg.classList.add('rotate-180');
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         // script.js
         document.addEventListener('DOMContentLoaded', function () {

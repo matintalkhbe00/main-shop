@@ -8,7 +8,7 @@
     <div class="flex justify-between items-center w-full">
         <!-- Logo & Menu -->
         <nav class="flex items-center gap-x-5 h-14">
-            <a href="{% url 'home' %}">
+            <a href="{% url 'home_app:home' %}">
                 <div class="shrink-0">
                     <img src="{% static 'img/app-logo.png' %}" alt="Coffee-Shopp-Logo"/>
                 </div>
@@ -16,7 +16,7 @@
             <ul
                     class="flex gap-3 lg:gap-6 xl:gap-9 xl:mr-9 text-xl h-full text-gray-300 tracking-tightest child:leading-[56px]">
                 <li>
-                    <a href="{% url 'home' %}" class="font-DanaMedium {% if request.resolver_match.url_name == 'home' %}text-orange-200 {% endif %}">صفحه ی اصلی</a>
+                    <a href="{% url 'home_app:home' %}" class="font-DanaMedium {% if request.resolver_match.url_name == 'home' %}text-orange-200 {% endif %}">صفحه ی اصلی</a>
                 </li>
                 <!-- has subset-->
                 <li class="relative group">
@@ -255,7 +255,7 @@
                     <svg class="w-5 h-5">
                         <use xlink:href="#home"></use>
                     </svg>
-                    <a href="{% url 'home' %}">صفحه اصلی</a>
+                    <a href="{% url 'home_app:home' %}">صفحه اصلی</a>
                 </li>
                 <!-- Sidebar Menu  -->
                 <li>
